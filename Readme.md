@@ -73,6 +73,14 @@ Setting up project locally.
    ```sh
    dotnet build ./src
    ```
+5. Optional: To create new migration:
+   ```sh
+    dotnet ef migrations add NewMigration --project src/PlayerService.Core --startup-project src/PlayerService.API
+   ```
+6. Apply migration
+   ```sh
+    dotnet ef database update --project src/PlayerService.Core --startup-project src/PlayerService.API
+   ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
