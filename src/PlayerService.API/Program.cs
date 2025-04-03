@@ -1,9 +1,12 @@
 using Microsoft.EntityFrameworkCore;
+using PlayerService.Core.Data;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
+
+builder.Services.AddControllers();
 
 var connection = builder.Configuration.GetConnectionString("Database");
 
@@ -22,5 +25,7 @@ if (app.Environment.IsDevelopment())
   app.MapOpenApi();
   app.MapScalarApiReference();
 }
+
+app.MapControllers();
 
 app.Run();

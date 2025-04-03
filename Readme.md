@@ -22,7 +22,6 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#ci-workflow">CI Workflow</a></li>
     <li><a href="#license">License</a></li>
   </ol>
@@ -73,7 +72,7 @@ Setting up project locally.
    ```sh
    dotnet build ./src
    ```
-5. Optional: To create new migration:
+5. To create new migration:
    ```sh
     dotnet ef migrations add NewMigration --project src/PlayerService.Core --startup-project src/PlayerService.API
    ```
@@ -81,16 +80,10 @@ Setting up project locally.
    ```sh
     dotnet ef database update --project src/PlayerService.Core --startup-project src/PlayerService.API
    ```
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-## Roadmap
-
-- [ ] Store player's characters
-- [ ] Save characters data
-- [ ] Get characters data
-- ...
-- [ ] Key validation
+7. Run Api
+   ```sh
+    dotnet run --project ./src/PlayerService.API
+   ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
