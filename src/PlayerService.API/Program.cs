@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PlayerService.Core.Data;
+using PlayerService.Validation;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,8 @@ if (app.Environment.IsDevelopment())
   app.MapOpenApi();
   app.MapScalarApiReference();
 }
+
+app.UseMiddleware<ValidationMiddleware>();
 
 app.MapControllers();
 

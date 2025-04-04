@@ -6,6 +6,7 @@ using PlayerService.Core.Entities;
 
 namespace PlayerService.Controllers;
 
+// Middleware guarantees HttpContext.Items["DotaId"] is a non-null long.
 [ApiController]
 [Route("api/player")]
 public class PlayerController(PlayerContext context) : ControllerBase
@@ -13,8 +14,10 @@ public class PlayerController(PlayerContext context) : ControllerBase
   private readonly PlayerContext _context = context;
 
   [HttpGet]
-  public async Task<Results<Ok<Player>, NotFound>> GetPlayer(long dotaId)
+  public async Task<Results<Ok<Player>, NotFound>> GetPlayer()
   {
+    var dotaId = (long)HttpContext.Items["DotaId"]!;
+
     var player = await _context.Players.FirstOrDefaultAsync(player => player.DotaId == dotaId);
 
     if (player == null)
@@ -26,8 +29,10 @@ public class PlayerController(PlayerContext context) : ControllerBase
   }
 
   [HttpPost]
-  public async Task<Results<Created, BadRequest>> AddPlayer(long dotaId)
+  public async Task<Results<Created, BadRequest, NotFound>> AddPlayer()
   {
+    var dotaId = (long)HttpContext.Items["DotaId"]!;
+
     var player = await _context.Players.FirstOrDefaultAsync(player => player.DotaId == dotaId);
 
     if (player != null)
