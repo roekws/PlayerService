@@ -24,6 +24,9 @@ public class PlayerContext : DbContext
       entity.Property(e => e.DotaId)
         .IsRequired();
 
+      entity.HasIndex(e => e.DotaId)
+        .IsUnique();
+
       entity.HasMany(e => e.Characters)
         .WithOne(e => e.Player)
         .HasForeignKey(e => e.PlayerId)
@@ -36,6 +39,8 @@ public class PlayerContext : DbContext
 
       entity.Property(e => e.Id)
         .ValueGeneratedOnAdd();
+
+      entity.HasIndex(e => e.PlayerId);
     });
   }
 }

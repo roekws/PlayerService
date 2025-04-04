@@ -13,16 +13,16 @@ public class CharacterController(PlayerContext context) : ControllerBase
 {
   private readonly PlayerContext _context = context;
 
-  [HttpGet]
-  public async Task<Results<BadRequest, Ok<List<Character>>, NotFound>> GetCharacters()
+  [HttpGet("list")]
+  public async Task<Results<Ok<List<CharacterInfoDto>>, BadRequest, NotFound>> GetCharacters()
   {
     // Middleware guarantees HttpContext.Items["DotaId"] is a non-null long
     var dotaId = (long)HttpContext.Items["DotaId"]!;
 
-    var player = await _context.Players.FirstOrDefaultAsync(player => player.DotaId == dotaId);
+    var player = await _context.Players.AnyAsync(player => player.DotaId == dotaId);
 
     // Player not found
-    if (player == null)
+    if (!player)
     {
       return TypedResults.BadRequest();
     }
@@ -30,32 +30,43 @@ public class CharacterController(PlayerContext context) : ControllerBase
     var characters = await _context.Characters
       .Where(character => character.PlayerId == dotaId)
       .OrderBy(character => character.CreatedAt)
+      .Select(c => new CharacterInfoDto(c.Id, c.Hero, c.Level, c.Expirience))
       .ToListAsync();
 
+    // Characters list found
     return TypedResults.Ok(characters);
   }
 
-  [HttpPost]
-  public async Task<Results<Created, BadRequest>> AddCharacter(Hero hero)
+  [HttpGet("{characterId}")]
+  public async Task<Results<Ok<Character>, NotFound>> GetCharacter(long characterId)
   {
     // Middleware guarantees HttpContext.Items["DotaId"] is a non-null long
     var dotaId = (long)HttpContext.Items["DotaId"]!;
 
-    var player = await _context.Players.FirstOrDefaultAsync(player => player.DotaId == dotaId);
+    var character = await _context.Characters
+      .FirstOrDefaultAsync(c => c.Id == characterId && c.PlayerId == dotaId);
 
-    // Player not found
-    if (player == null)
+    if (character == null)
     {
-      return TypedResults.BadRequest();
+      return TypedResults.NotFound();
     }
 
-    var charactersAmount = await _context.Characters
-      .Where(character => character.PlayerId == dotaId)
-      .OrderBy(character => character.CreatedAt)
-      .CountAsync();
+    return TypedResults.Ok(character);
+  }
 
-    // Players not allowed to create more characters than his limit
-    if (charactersAmount >= player.CharactersLimit)
+  [HttpPost("create")]
+  public async Task<Results<Created, BadRequest>> AddCharacter(string createHero)
+  {
+    // Middleware guarantees HttpContext.Items["DotaId"] is a non-null long
+    var dotaId = (long)HttpContext.Items["DotaId"]!;
+
+    var hasAvailableSlots = await _context.Players
+        .Where(p => p.DotaId == dotaId)
+        .Select(p => p.Characters.Count < p.CharactersLimit)
+        .FirstOrDefaultAsync();
+
+    // Player not found or character amount hit limit
+    if (!hasAvailableSlots || !Enum.TryParse(createHero, out Hero hero))
     {
       return TypedResults.BadRequest();
     }
@@ -64,11 +75,12 @@ public class CharacterController(PlayerContext context) : ControllerBase
     _context.Characters.Add(addCharacter);
     await _context.SaveChangesAsync();
 
-    return TypedResults.Created(addCharacter.Id.ToString());
+    // Character created
+    return TypedResults.Created();
   }
 
-  [HttpDelete]
-  public async Task<Results<NoContent, BadRequest>> DeleteCharacter(long characterId)
+  [HttpDelete("delete")]
+  public async Task<Results<NoContent, BadRequest, NotFound>> DeleteCharacter(long characterId)
   {
     // Middleware guarantees HttpContext.Items["DotaId"] is a non-null long
     var dotaId = (long)HttpContext.Items["DotaId"]!;
@@ -86,7 +98,7 @@ public class CharacterController(PlayerContext context) : ControllerBase
     // Character not found
     if (deleteCharacter == null)
     {
-      return TypedResults.BadRequest();
+      return TypedResults.NotFound();
     }
 
     // Player not allowed to delete character of another player
@@ -98,6 +110,7 @@ public class CharacterController(PlayerContext context) : ControllerBase
     _context.Characters.Remove(deleteCharacter);
     await _context.SaveChangesAsync();
 
+    // Character deleted
     return TypedResults.NoContent();
   }
 }

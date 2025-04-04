@@ -13,29 +13,34 @@ public class PlayerController(PlayerContext context) : ControllerBase
 {
   private readonly PlayerContext _context = context;
 
-  [HttpGet]
-  public async Task<Results<Ok<Player>, NotFound>> GetPlayer()
+  [HttpGet("login")]
+  public async Task<Results<Ok, NotFound>> IsPlayerExist()
   {
+    // Middleware guarantees HttpContext.Items["DotaId"] is a non-null long
     var dotaId = (long)HttpContext.Items["DotaId"]!;
 
-    var player = await _context.Players.FirstOrDefaultAsync(player => player.DotaId == dotaId);
+    var player = await _context.Players.AnyAsync(player => player.DotaId == dotaId);
 
-    if (player == null)
+    // Player not found
+    if (!player)
     {
       return TypedResults.NotFound();
     }
 
-    return TypedResults.Ok(player);
+    // Player exist
+    return TypedResults.Ok();
   }
 
-  [HttpPost]
-  public async Task<Results<Created, BadRequest, NotFound>> AddPlayer()
+  [HttpPost("register")]
+  public async Task<Results<Created, BadRequest>> AddPlayer()
   {
+    // Middleware guarantees HttpContext.Items["DotaId"] is a non-null long
     var dotaId = (long)HttpContext.Items["DotaId"]!;
 
-    var player = await _context.Players.FirstOrDefaultAsync(player => player.DotaId == dotaId);
+    var player = await _context.Players.AnyAsync(player => player.DotaId == dotaId);
 
-    if (player != null)
+    // Player already exist
+    if (player)
     {
       return TypedResults.BadRequest();
     }
@@ -44,6 +49,7 @@ public class PlayerController(PlayerContext context) : ControllerBase
     _context.Players.Add(AddPlayer);
     await _context.SaveChangesAsync();
 
-    return TypedResults.Created(AddPlayer.Id.ToString());
+    // Player created
+    return TypedResults.Created();
   }
 }

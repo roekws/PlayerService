@@ -20,7 +20,7 @@ public class ValidationMiddleware
     }
 
     // Validate Dedicated key
-    var key = context.Request.Headers["Dedicated-Server-Key"].ToString();
+    var key = context.Request.Headers["X-Dedicated-Server-Key"].ToString();
     if (string.IsNullOrEmpty(key) || !IsValidDedicatedKey(key))
     {
       // 404 Instead of 401 to Avoid information leakage
