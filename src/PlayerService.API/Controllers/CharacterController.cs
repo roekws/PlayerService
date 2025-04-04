@@ -68,7 +68,7 @@ public class CharacterController(PlayerContext context) : ControllerBase
   }
 
   [HttpDelete]
-  public async Task<Results<Created, BadRequest>> DeleteCharacter(long heroId)
+  public async Task<Results<NoContent, BadRequest>> DeleteCharacter(long characterId)
   {
     // Middleware guarantees HttpContext.Items["DotaId"] is a non-null long
     var dotaId = (long)HttpContext.Items["DotaId"]!;
@@ -81,20 +81,23 @@ public class CharacterController(PlayerContext context) : ControllerBase
       return TypedResults.BadRequest();
     }
 
-    var charactersAmount = await _context.Characters
-      .Where(character => character.PlayerId == dotaId)
-      .OrderBy(character => character.CreatedAt)
-      .CountAsync();
+    var deleteCharacter = await _context.Characters.FirstOrDefaultAsync(character => character.Id == characterId);
 
-    if (charactersAmount >= player.CharactersLimit)
+    // Character not found
+    if (deleteCharacter == null)
     {
       return TypedResults.BadRequest();
     }
 
-    var addCharacter = new Character() { PlayerId = dotaId, Hero = hero };
-    _context.Characters.Add(addCharacter);
+    // Player not allowed to delete character of another player
+    if (deleteCharacter.PlayerId != player.Id)
+    {
+      return TypedResults.BadRequest();
+    }
+
+    _context.Characters.Remove(deleteCharacter);
     await _context.SaveChangesAsync();
 
-    return TypedResults.Created(addCharacter.Id.ToString());
+    return TypedResults.NoContent();
   }
 }
