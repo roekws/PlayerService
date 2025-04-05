@@ -52,10 +52,9 @@ public class ValidationMiddleware(RequestDelegate next, IHostEnvironment env)
     await _next(context);
   }
 
-  private bool IsValidDedicatedKey(string key)
+  private bool IsValidDedicatedKey(string inputKey)
   {
-    return true;
-    // return key == Environment.GetEnvironmentVariable("API_KEY");
-    // Can get key only after publishing to server
+    var validKey = Environment.GetEnvironmentVariable("API_KEY");
+    return string.Equals(inputKey, validKey, StringComparison.Ordinal);
   }
 }

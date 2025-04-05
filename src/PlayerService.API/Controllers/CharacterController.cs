@@ -68,7 +68,7 @@ public class CharacterController(PlayerContext context, PlayerRequestContext pla
   }
 
   [HttpPost("{characterId}/level-up")]
-  public async Task<Results<Ok<Character>, NotFound<ApiErrorResponse>>> LevelUp(long characterId)
+  public async Task<Results<Ok, NotFound<ApiErrorResponse>>> LevelUp(long characterId)
   {
     var character = await _context.Characters
       .FirstOrDefaultAsync(c => c.Id == characterId && c.PlayerId == _player.DotaId);
@@ -81,7 +81,7 @@ public class CharacterController(PlayerContext context, PlayerRequestContext pla
     character.Level += 1;
     await _context.SaveChangesAsync();
 
-    return TypedResults.Ok(character);
+    return TypedResults.Ok();
   }
 
   [HttpPost("create")]

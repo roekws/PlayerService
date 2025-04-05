@@ -57,33 +57,48 @@ Setting up project locally.
 * Git
 * .NET SDK 9
 * PostgreSQL
+* Docker
 
 ### Installation
 
-1. Clone the repo
+# Docker Setup
+
+1. Build and start:
    ```sh
-   git clone https://github.com/roekws/PlayerService
+   docker-compose up --build
    ```
-3. Restore .NET Dependencies
-   ```sh
-   dotnet restore ./src
-   ```
-4. Build .NET
-   ```sh
-   dotnet build ./src
-   ```
-5. To create new migration:
-   ```sh
-    dotnet ef migrations add NewMigration --project src/PlayerService.Core --startup-project src/PlayerService.API
-   ```
-6. Apply migration
-   ```sh
-    dotnet ef database update --project src/PlayerService.Core --startup-project src/PlayerService.API
-   ```
-7. Run Api
-   ```sh
-    dotnet run --project ./src/PlayerService.API
-   ```
+
+2. Access the API at: http://localhost:8080/scalar
+
+3. Stop with:
+  ```sh
+  docker-compose down
+  ```
+
+# Complete reset and rebuild
+
+1. Stop and remove everything:
+  ```sh
+  docker-compose down -v
+  ```
+2. Delete all unused containers and networks:
+  ```sh
+  docker system prune -f
+  ```
+3. Rebuild with no cache:
+  ```sh
+  docker-compose build --no-cache
+  ```
+4. Start fresh:
+  ```sh
+  docker-compose up
+  ```
+
+To create new migration:
+```sh
+dotnet ef migrations add NewMigration --project src/PlayerService.Core --startup-project src/PlayerService.API
+```
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

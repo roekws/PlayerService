@@ -73,7 +73,7 @@ public class PlayerIntegrationTests
     var client = _factory.CreateClient();
 
     var request = new HttpRequestMessage(HttpMethod.Get, url);
-    request.Headers.Add("X-Dedicated-Server-Key", "valid-key");
+    request.Headers.Add("X-Dedicated-Server-Key", Environment.GetEnvironmentVariable("API_KEY"));
 
     // Act
     var response = await client.SendAsync(request);
@@ -91,7 +91,7 @@ public class PlayerIntegrationTests
 
     var request = new HttpRequestMessage(HttpMethod.Get, url);
     request.Headers.Add("X-Dota-Id", "IdIs2");
-    request.Headers.Add("X-Dedicated-Server-Key", "valid-key");
+    request.Headers.Add("X-Dedicated-Server-Key", Environment.GetEnvironmentVariable("API_KEY"));
 
     // Act
     var response = await client.SendAsync(request);
@@ -112,7 +112,7 @@ public class PlayerIntegrationTests
 
     var request = new HttpRequestMessage(HttpMethod.Post, url);
     request.Headers.Add("X-Dota-Id", "1");
-    request.Headers.Add("X-Dedicated-Server-Key", "valid-key");
+    request.Headers.Add("X-Dedicated-Server-Key", Environment.GetEnvironmentVariable("API_KEY"));
 
     // Act
     var response = await client.SendAsync(request);
@@ -130,7 +130,7 @@ public class PlayerIntegrationTests
 
     var request = new HttpRequestMessage(HttpMethod.Get, url);
     request.Headers.Add("X-Dota-Id", "1");
-    request.Headers.Add("X-Dedicated-Server-Key", "valid-key");
+    request.Headers.Add("X-Dedicated-Server-Key", Environment.GetEnvironmentVariable("API_KEY"));
 
     // Act
     var response = await client.SendAsync(request);
@@ -148,7 +148,7 @@ public class PlayerIntegrationTests
 
     var request = new HttpRequestMessage(HttpMethod.Post, url);
     request.Headers.Add("X-Dota-Id", "1");
-    request.Headers.Add("X-Dedicated-Server-Key", "valid-key");
+    request.Headers.Add("X-Dedicated-Server-Key", Environment.GetEnvironmentVariable("API_KEY"));
 
     // Act
     var response = await client.SendAsync(request);

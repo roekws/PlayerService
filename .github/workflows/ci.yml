@@ -9,9 +9,19 @@ on:
       - master
 
 jobs:
-  dotnet:
-    name: dotnet Build/Tests
+  build-and-test:
+    name: Docker Build and Test
     runs-on: ubuntu-latest
+    env:
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      API_KEY: ${{ secrets.API_KEY }}
+      ASPNETCORE_URLS: ${{ secrets.ASPNETCORE_URLS }}
+      ASPNETCORE_ENVIRONMENT: Production
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -22,13 +32,52 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 9.0
+          dotnet-version: '9.0'
 
-      - name: Restore Dependencies
-        run: dotnet restore ./src
-
-      - name: Build .NET
-        run: dotnet build ./src --configuration Release
-
-      - name: Run .NET Tests
+      - name: Run Unit Tests
         run: dotnet test ./src/Tests --configuration Release
+
+      - name: Build
+        run: |
+          docker build \
+            --build-arg DB_HOST=$DB_HOST \
+            --build-arg DB_PORT=$DB_PORT \
+            --build-arg DB_NAME=$DB_NAME \
+            --build-arg DB_USER=$DB_USER \
+            --build-arg DB_PASSWORD=$DB_PASSWORD \
+            --build-arg API_KEY=$API_KEY \
+            --build-arg ASPNETCORE_URLS=$ASPNETCORE_URLS \
+            --build-arg ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT \
+            -t player-service .
+# deploy:
+  #   needs: test
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     DB_HOST: ${{ secrets.DB_HOST }}
+  #     DB_PORT: ${{ secrets.DB_PORT }}
+  #     DB_NAME: ${{ secrets.DB_NAME }}
+  #     DB_USER: ${{ secrets.DB_USER }}
+  #     DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  #     API_KEY: ${{ secrets.API_KEY }}
+  #     ASPNETCORE_URLS: ${ASPNETCORE_URLS}
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   - name: Install SSH Key
+  #     uses: appleboy/ssh-action@v1
+  #     with:
+  #       host: ${{ secrets.VPS_HOST }}
+  #       username: ${{ secrets.VPS_USER }}
+  #       key: ${{ secrets.VPS_SSH_KEY }}
+  #       port: ${{ secrets.VPS_PORT || 22 }}
+
+  #   - name: Secure Deploy
+  #     run: |
+  #       ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+  #       cd /path/to/your/app
+  #       echo "API_KEY=${{ secrets.API_KEY }}" >> .env
+  #       docker-compose down
+  #       git pull origin master
+  #       docker-compose build --no-cache
+  #       docker-compose up -d
+  #       docker system prune -f
+  #       EOF
