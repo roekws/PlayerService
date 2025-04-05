@@ -1,18 +1,19 @@
-namespace PlayerService.Validation;
+using PlayerService.API.Infrastructure.Context;
+using PlayerService.API.Infrastructure.Errors;
 
-public class ValidationMiddleware
+namespace PlayerService.API.Infrastructure.Validation;
+
+public class ValidationMiddleware(RequestDelegate next, IHostEnvironment env)
 {
-  private readonly RequestDelegate _next;
-
-  public ValidationMiddleware(RequestDelegate next)
-  {
-    _next = next;
-  }
+  private readonly RequestDelegate _next = next;
+  private readonly IHostEnvironment _env = env;
 
   public async Task InvokeAsync(HttpContext context)
   {
     // Skip validation for Scalar/OpenAPI routes
-    if (context.Request.Path.StartsWithSegments("/scalar") ||
+    // Skip in Development only
+    if (_env.IsDevelopment() &&
+        context.Request.Path.StartsWithSegments("/scalar") ||
         context.Request.Path.StartsWithSegments("/openapi"))
     {
       await _next(context);
@@ -33,18 +34,20 @@ public class ValidationMiddleware
     if (!context.Request.Headers.TryGetValue("X-Dota-Id", out var dotaIdHeader))
     {
       context.Response.StatusCode = 404;
-      await context.Response.WriteAsync("Not Found");
+      await context.Response.WriteAsJsonAsync("Not Found");
       return;
     }
 
     if (!long.TryParse(dotaIdHeader, out var dotaId))
     {
       context.Response.StatusCode = 404;
-      await context.Response.WriteAsync("Not Found");
+      await context.Response.WriteAsJsonAsync(ApiErrorResponse.Create(ApiErrors.InvalidDotaId));
       return;
     }
 
-    context.Items["DotaId"] = dotaId;
+    var playerContext = context.RequestServices.GetRequiredService<PlayerRequestContext>();
+    playerContext.DotaId = dotaId;
+
     await _next(context);
   }
 

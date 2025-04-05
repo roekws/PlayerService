@@ -1,51 +1,45 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PlayerService.API.Infrastructure.Context;
+using PlayerService.API.Infrastructure.Errors;
 using PlayerService.Core.Data;
 using PlayerService.Core.Entities;
 
-namespace PlayerService.Controllers;
+namespace PlayerService.API.Controllers;
 
-// Middleware guarantees HttpContext.Items["DotaId"] is a non-null long.
 [ApiController]
 [Route("api/player")]
-public class PlayerController(PlayerContext context) : ControllerBase
+public class PlayerController(PlayerContext context, PlayerRequestContext player) : ControllerBase
 {
   private readonly PlayerContext _context = context;
+  private readonly PlayerRequestContext _player = player;
 
-  [HttpGet("login")]
-  public async Task<Results<Ok, NotFound>> IsPlayerExist()
+
+  [HttpGet("exists")]
+  public async Task<Results<Ok, NotFound<ApiErrorResponse>>> IsPlayerExist()
   {
-    // Middleware guarantees HttpContext.Items["DotaId"] is a non-null long
-    var dotaId = (long)HttpContext.Items["DotaId"]!;
+    var player = await _context.Players.AnyAsync(player => player.DotaId == _player.DotaId);
 
-    var player = await _context.Players.AnyAsync(player => player.DotaId == dotaId);
-
-    // Player not found
     if (!player)
     {
-      return TypedResults.NotFound();
+      return TypedResults.NotFound(ApiErrorResponse.Create(ApiErrors.PlayerNotFound));
     }
 
-    // Player exist
     return TypedResults.Ok();
   }
 
-  [HttpPost("register")]
-  public async Task<Results<Created, BadRequest>> AddPlayer()
+  [HttpPost]
+  public async Task<Results<Created, BadRequest<ApiErrorResponse>>> AddPlayer()
   {
-    // Middleware guarantees HttpContext.Items["DotaId"] is a non-null long
-    var dotaId = (long)HttpContext.Items["DotaId"]!;
+    var player = await _context.Players.AnyAsync(player => player.DotaId == _player.DotaId);
 
-    var player = await _context.Players.AnyAsync(player => player.DotaId == dotaId);
-
-    // Player already exist
     if (player)
     {
-      return TypedResults.BadRequest();
+      return TypedResults.BadRequest(ApiErrorResponse.Create(ApiErrors.PlayerExists));
     }
 
-    var AddPlayer = new Player() { DotaId = dotaId };
+    var AddPlayer = new Player() { DotaId = _player.DotaId };
     _context.Players.Add(AddPlayer);
     await _context.SaveChangesAsync();
 
