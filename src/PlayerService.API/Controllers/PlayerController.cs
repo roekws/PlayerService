@@ -43,7 +43,6 @@ public class PlayerController(PlayerContext context, PlayerRequestContext player
     _context.Players.Add(AddPlayer);
     await _context.SaveChangesAsync();
 
-    // Player created
     return TypedResults.Created();
   }
 }
