@@ -30,7 +30,7 @@ public class CharacterController(PlayerContext context) : ControllerBase
     var characters = await _context.Characters
       .Where(character => character.PlayerId == dotaId)
       .OrderBy(character => character.CreatedAt)
-      .Select(c => new CharacterInfoDto(c.Id, c.Hero, c.Level, c.Expirience))
+      .Select(c => new CharacterInfoDto(c.Id, c.Hero.ToString(), c.Level, c.Experience))
       .ToListAsync();
 
     // Characters list found
@@ -38,7 +38,7 @@ public class CharacterController(PlayerContext context) : ControllerBase
   }
 
   [HttpGet("{characterId}")]
-  public async Task<Results<Ok<Character>, NotFound>> GetCharacter(long characterId)
+  public async Task<Results<Ok, NotFound>> GetCharacter(long characterId)
   {
     // Middleware guarantees HttpContext.Items["DotaId"] is a non-null long
     var dotaId = (long)HttpContext.Items["DotaId"]!;
@@ -50,6 +50,46 @@ public class CharacterController(PlayerContext context) : ControllerBase
     {
       return TypedResults.NotFound();
     }
+
+    return TypedResults.Ok();
+  }
+
+  [HttpGet("{characterId}/exp-change")]
+  public async Task<Results<Ok<Character>, NotFound>> ChangeExp(long characterId, int expChange)
+  {
+    // Middleware guarantees HttpContext.Items["DotaId"] is a non-null long
+    var dotaId = (long)HttpContext.Items["DotaId"]!;
+
+    var character = await _context.Characters
+      .FirstOrDefaultAsync(c => c.Id == characterId && c.PlayerId == dotaId);
+
+    if (character == null)
+    {
+      return TypedResults.NotFound();
+    }
+
+    character.Experience += expChange;
+    await _context.SaveChangesAsync();
+
+    return TypedResults.Ok(character);
+  }
+
+  [HttpGet("{characterId}/level-up")]
+  public async Task<Results<Ok<Character>, NotFound>> LevelUp(long characterId)
+  {
+    // Middleware guarantees HttpContext.Items["DotaId"] is a non-null long
+    var dotaId = (long)HttpContext.Items["DotaId"]!;
+
+    var character = await _context.Characters
+      .FirstOrDefaultAsync(c => c.Id == characterId && c.PlayerId == dotaId);
+
+    if (character == null)
+    {
+      return TypedResults.NotFound();
+    }
+
+    character.Level += 1;
+    await _context.SaveChangesAsync();
 
     return TypedResults.Ok(character);
   }

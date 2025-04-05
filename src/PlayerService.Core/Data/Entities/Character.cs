@@ -11,7 +11,7 @@ public class Character : BaseEntity
 
   public int Level { get; set; } = 1;
 
-  public int Expirience { get; set; } = 0;
+  public int Experience { get; set; } = 0;
 
   public long PlayerId { get; set; }
 
@@ -19,4 +19,4 @@ public class Character : BaseEntity
   public Player Player { get; set; } = null!; // Required reference navigation to principal
 }
 
-public record CharacterInfoDto(long Id, Hero Hero, int Level, int Expirience);
+public record CharacterInfoDto(long Id, string Hero, int Level, int Experience);

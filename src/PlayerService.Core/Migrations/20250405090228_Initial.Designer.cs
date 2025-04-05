@@ -12,7 +12,7 @@ using PlayerService.Core.Data;
 namespace PlayerService.Core.Migrations
 {
     [DbContext(typeof(PlayerContext))]
-    [Migration("20250403110104_Initial")]
+    [Migration("20250405090228_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -36,7 +36,7 @@ namespace PlayerService.Core.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("Expirience")
+                    b.Property<int>("Experience")
                         .HasColumnType("integer");
 
                     b.Property<int>("Hero")
@@ -73,6 +73,9 @@ namespace PlayerService.Core.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DotaId")
+                        .IsUnique();
 
                     b.ToTable("Players");
                 });

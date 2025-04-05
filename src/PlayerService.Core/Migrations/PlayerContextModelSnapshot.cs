@@ -33,7 +33,7 @@ namespace PlayerService.Core.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("Expirience")
+                    b.Property<int>("Experience")
                         .HasColumnType("integer");
 
                     b.Property<int>("Hero")

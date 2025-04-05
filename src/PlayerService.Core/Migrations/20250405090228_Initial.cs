@@ -35,7 +35,7 @@ namespace PlayerService.Core.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Hero = table.Column<int>(type: "integer", nullable: false),
                     Level = table.Column<int>(type: "integer", nullable: false),
-                    Expirience = table.Column<int>(type: "integer", nullable: false),
+                    Experience = table.Column<int>(type: "integer", nullable: false),
                     PlayerId = table.Column<long>(type: "bigint", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -54,6 +54,12 @@ namespace PlayerService.Core.Migrations
                 name: "IX_Characters_PlayerId",
                 table: "Characters",
                 column: "PlayerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Players_DotaId",
+                table: "Players",
+                column: "DotaId",
+                unique: true);
         }
 
         /// <inheritdoc />
