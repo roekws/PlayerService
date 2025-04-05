@@ -21,4 +21,8 @@
     <ProjectReference Include="..\PlayerService.Core\PlayerService.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Tests" />
+  </ItemGroup>
+
 </Project>

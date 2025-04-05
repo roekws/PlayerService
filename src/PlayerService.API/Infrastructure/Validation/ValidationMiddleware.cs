@@ -1,5 +1,6 @@
 using PlayerService.API.Infrastructure.Context;
 using PlayerService.API.Infrastructure.Errors;
+using PlayerService.Core.Data;
 
 namespace PlayerService.API.Infrastructure.Validation;
 
@@ -40,7 +41,7 @@ public class ValidationMiddleware(RequestDelegate next, IHostEnvironment env)
 
     if (!long.TryParse(dotaIdHeader, out var dotaId))
     {
-      context.Response.StatusCode = 404;
+      context.Response.StatusCode = 400;
       await context.Response.WriteAsJsonAsync(ApiErrorResponse.Create(ApiErrors.InvalidDotaId));
       return;
     }
