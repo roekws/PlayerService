@@ -68,38 +68,17 @@ Setting up project locally.
    docker-compose up --build
    ```
 
-2. Access the API at: http://localhost:8080/scalar
+2. Access the API at: http://127.0.0.1:8080/scalar/
 
 3. Stop with:
   ```sh
   docker-compose down
   ```
 
-# Complete reset and rebuild
-
-1. Stop and remove everything:
-  ```sh
-  docker-compose down -v
-  ```
-2. Delete all unused containers and networks:
-  ```sh
-  docker system prune -f
-  ```
-3. Rebuild with no cache:
-  ```sh
-  docker-compose build --no-cache
-  ```
-4. Start fresh:
-  ```sh
-  docker-compose up
-  ```
-
 To create new migration:
 ```sh
 dotnet ef migrations add NewMigration --project src/PlayerService.Core --startup-project src/PlayerService.API
 ```
-
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 # CI Workflow

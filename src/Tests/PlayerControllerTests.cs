@@ -1,36 +1,16 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using PlayerService.Core.Data;
-using PlayerService.IntegrationTests.Data;
+
 
 namespace PlayerService.IntegrationTests;
 
-public class PlayerIntegrationTests
-  : IClassFixture<WebApplicationFactory<Program>>, IClassFixture<DatabaseFixture>
+[TestCaseOrderer(
+    ordererTypeName: "XUnit.Project.Orderers.AlphabeticalOrderer",
+    ordererAssemblyName: "XUnit.Project")]
+public class PlayerIntegrationTests(WebApplicationFactory<Program> factory)
+    : IClassFixture<WebApplicationFactory<Program>>
 {
-  private readonly WebApplicationFactory<Program> _factory;
-  private readonly DatabaseFixture _dbFixture;
-
-  public PlayerIntegrationTests(WebApplicationFactory<Program> factory, DatabaseFixture dbFixture)
-  {
-    _factory = factory;
-    _dbFixture = dbFixture;
-
-    // Configure factory to use test database
-    _factory = _factory.WithWebHostBuilder(builder =>
-    {
-      builder.ConfigureTestServices(services =>
-      {
-        // Replace database connection with test container
-        services.RemoveAll<DbContextOptions<PlayerContext>>();
-        services.AddDbContext<PlayerContext>(options => options.UseNpgsql(_dbFixture.ConnectionString));
-      });
-    });
-  }
+  private readonly WebApplicationFactory<Program> _factory = factory;
 
   [Theory]
   [InlineData("/api/player/exists")]
@@ -45,7 +25,7 @@ public class PlayerIntegrationTests
     var response = await client.SendAsync(request);
 
     // Assert
-    Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
   }
 
   [Theory]
@@ -62,7 +42,7 @@ public class PlayerIntegrationTests
     var response = await client.SendAsync(request);
 
     // Assert
-    Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
   }
 
   [Theory]
@@ -79,7 +59,7 @@ public class PlayerIntegrationTests
     var response = await client.SendAsync(request);
 
     // Assert
-    Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
   }
 
   [Theory]
@@ -100,18 +80,15 @@ public class PlayerIntegrationTests
     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
   }
 
-  // Tests are running in alphabetical order
-  // Tests must run in order to validate create then fail on duplicate id
-  // Use step of 10 in case of needing to insert new test method later
   [Theory]
   [InlineData("/api/player")]
-  public async Task A010_CreatePlayer_WithNewDotaId_ReturnsCreated(string url)
+  public async Task CreatePlayer_WithNewDotaId_ReturnsCreated(string url)
   {
     // Arrange
     var client = _factory.CreateClient();
 
     var request = new HttpRequestMessage(HttpMethod.Post, url);
-    request.Headers.Add("X-Dota-Id", "1");
+    request.Headers.Add("X-Dota-Id", "11111111");
     request.Headers.Add("X-Dedicated-Server-Key", Environment.GetEnvironmentVariable("API_KEY"));
 
     // Act
@@ -123,13 +100,13 @@ public class PlayerIntegrationTests
 
   [Theory]
   [InlineData("/api/player/exists")]
-  public async Task A020_GetPlayerByDotaId_WithValidHeaders_ReturnsCreated(string url)
+  public async Task GetPlayerByDotaId_WithValidHeaders_ReturnsCreated(string url)
   {
     // Arrange
     var client = _factory.CreateClient();
 
     var request = new HttpRequestMessage(HttpMethod.Get, url);
-    request.Headers.Add("X-Dota-Id", "1");
+    request.Headers.Add("X-Dota-Id", "11111111");
     request.Headers.Add("X-Dedicated-Server-Key", Environment.GetEnvironmentVariable("API_KEY"));
 
     // Act
@@ -141,13 +118,13 @@ public class PlayerIntegrationTests
 
   [Theory]
   [InlineData("/api/player")]
-  public async Task A030_CreatePlayer_WithExistingDotaId_ReturnsBadRequest(string url)
+  public async Task CreatePlayer_WithExistingDotaId_ReturnsBadRequest(string url)
   {
     // Arrange
     var client = _factory.CreateClient();
 
     var request = new HttpRequestMessage(HttpMethod.Post, url);
-    request.Headers.Add("X-Dota-Id", "1");
+    request.Headers.Add("X-Dota-Id", "11111111");
     request.Headers.Add("X-Dedicated-Server-Key", Environment.GetEnvironmentVariable("API_KEY"));
 
     // Act
@@ -155,5 +132,23 @@ public class PlayerIntegrationTests
 
     // Assert
     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+  }
+
+  [Theory]
+  [InlineData("/api/player")]
+  public async Task DeletePlayer_WithExistingDotaId_ReturnsNoContent(string url)
+  {
+    // Arrange
+    var client = _factory.CreateClient();
+
+    var request = new HttpRequestMessage(HttpMethod.Delete, url);
+    request.Headers.Add("X-Dota-Id", "11111111");
+    request.Headers.Add("X-Dedicated-Server-Key", Environment.GetEnvironmentVariable("API_KEY"));
+
+    // Act
+    var response = await client.SendAsync(request);
+
+    // Assert
+    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
   }
 }

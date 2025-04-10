@@ -1,27 +1,28 @@
-# Build stage
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+# Create a stage for building the application.
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
+ARG TARGETARCH
+COPY . /source
 
-# Copy project files
-COPY ["src/PlayerService.API/PlayerService.API.csproj", "src/PlayerService.API/"]
-COPY ["src/PlayerService.Core/PlayerService.Core.csproj", "src/PlayerService.Core/"]
-RUN dotnet restore "src/PlayerService.API/PlayerService.API.csproj"
+WORKDIR /source/src
+RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
+    dotnet publish -a ${TARGETARCH/amd64/x64} --use-current-runtime --self-contained false -o /app
 
-# Copy everything else
-COPY ["src/", "src/"]
+FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS development
+COPY . /source
+WORKDIR /source/src
+CMD dotnet run --no-launch-profile
 
-# Build
-RUN dotnet build "src/PlayerService.API/PlayerService.API.csproj" -c Release -o /app/build
-
-# Publish stage
-FROM build AS publish
-RUN dotnet publish "src/PlayerService.API/PlayerService.API.csproj" -c Release -o /publish
-
-# Runtime stage
-FROM mcr.microsoft.com/dotnet/aspnet:9.0
-COPY --from=publish /publish /app/
-
-# # Copy dev certificate
-# COPY ["src/PlayerService.API/https/cert.pfx", "app/https/cert.pfx"]
-
-# Run
-ENTRYPOINT ["dotnet", "/app/PlayerService.API.dll"]
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS final
+WORKDIR /app
+COPY --from=build /app .
+ARG UID=10001
+RUN adduser \
+    --disabled-password \
+    --gecos "" \
+    --home "/nonexistent" \
+    --shell "/sbin/nologin" \
+    --no-create-home \
+    --uid "${UID}" \
+    appuser
+USER appuser
+ENTRYPOINT ["dotnet", "PlayerService.API.dll"]

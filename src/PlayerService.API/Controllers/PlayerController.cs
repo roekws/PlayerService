@@ -45,4 +45,20 @@ public class PlayerController(PlayerContext context, PlayerRequestContext player
 
     return TypedResults.Created();
   }
+
+  [HttpDelete]
+  public async Task<Results<NoContent, BadRequest<ApiErrorResponse>>> RemovePlayer()
+  {
+    var player = await _context.Players.FirstOrDefaultAsync(player => player.DotaId == _player.DotaId);
+
+    if (player == null)
+    {
+      return TypedResults.BadRequest(ApiErrorResponse.Create(ApiErrors.PlayerNotFound));
+    }
+
+    _context.Players.Remove(player);
+    await _context.SaveChangesAsync();
+
+    return TypedResults.NoContent();
+  }
 }
