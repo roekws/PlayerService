@@ -33,15 +33,22 @@ A backend service for managing player's character data.
 
 ### Project Structure
 
-- src/PlayerService.API - Web API for player data management
-- src/PlayerService.Core - Domain classes
-- src/PlayerService.Tests - tests
+- src/Players.AppHost - The .NET project that orchestrates the app model
+- src/Players.ServiceDefaults:
+  - Configures OpenTelemetry metrics and tracing.
+  - Adds default health check endpoints.
+  - Adds service discovery functionality.
+  - Configures HttpClient to work with service discovery.
+
+- src/Players.API - Web API for player data management
+- src/Players.Core - Domain classes, context and migrations
+- src/Players.Tests - tests
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Built With
-
+* NET Aspire - cloud ready stack for building  applications
 * ASP.NET Core - web framework
 * EntityFramework Core - Object-Relational Mapper (ORM) for .NET
 * Npgsql - .NET Access to PostgreSQL
@@ -61,24 +68,23 @@ Setting up project locally.
 
 ### Installation
 
-# Docker Setup
-
-1. Build and start:
+1. You need to trust the ASP.NET Core localhost certificate before running the app. Run the following command:
    ```sh
-   docker-compose up --build
+    dotnet dev-certs https --trust
    ```
 
-2. Access the API at: http://127.0.0.1:8080/scalar/
+2. Build and start:
+   ```sh
+   dotnet run --project .\src\Players.AppHost\
+   ```
 
-3. Stop with:
-  ```sh
-  docker-compose down
-  ```
+3. Access the API Documentation at: https://localhost:7208/scalar
 
 To create new migration:
 ```sh
-dotnet ef migrations add NewMigration --project src/PlayerService.Core --startup-project src/PlayerService.API
+dotnet ef migrations add NewMigration --project src/Players.Core --startup-project src/Players.API
 ```
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 # CI Workflow

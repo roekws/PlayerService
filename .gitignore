@@ -3,8 +3,9 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
-# dotenv files
+# env files
 .env
+appsettings.*json
 
 # User-specific files
 *.rsuser
