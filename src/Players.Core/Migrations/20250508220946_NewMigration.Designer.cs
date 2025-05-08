@@ -12,8 +12,8 @@ using Players.Core.Data;
 namespace Players.Core.Migrations
 {
     [DbContext(typeof(PlayerContext))]
-    [Migration("20250508205123_Init")]
-    partial class Init
+    [Migration("20250508220946_NewMigration")]
+    partial class NewMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

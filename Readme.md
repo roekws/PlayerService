@@ -48,7 +48,6 @@ A backend service for managing player's character data.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Built With
-* NET Aspire - cloud ready stack for building  applications
 * ASP.NET Core - web framework
 * EntityFramework Core - Object-Relational Mapper (ORM) for .NET
 * Npgsql - .NET Access to PostgreSQL
@@ -68,34 +67,43 @@ Setting up project locally.
 
 ### Installation
 
-1. You need to trust the ASP.NET Core localhost certificate before running the app. Run the following command:
-   ```sh
-    dotnet dev-certs https --trust
-   ```
+0. (Optional) To create new migration:
+  ```sh
+  dotnet ef migrations add NewMigration --project src/Players.Core --startup-project src/Players.API
+  ```
+
+1. Create a .env file in the project root with these variables (example values):
+  ```sh
+  DB_NAME=players_db
+  DB_USER=postgres
+  DB_PASSWORD=securepassword123
+  API_KEY=dev-key-123
+  ASPNETCORE_ENVIRONMENT=Development
+  ```
 
 2. Build and start:
    ```sh
-   dotnet run --project .\src\Players.AppHost\
+   docker-compose up --build
    ```
 
-3. Access the API Documentation at: https://localhost:7208/scalar
+3. Access the API at: http://127.0.0.1:8080/scalar/
 
-To create new migration:
-```sh
-dotnet ef migrations add NewMigration --project src/Players.Core --startup-project src/Players.API
-```
+4. Stop with:
+   ```sh
+   docker-compose down
+   ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-# CI Workflow
+### CI Workflow
 
 CI workflow performs runs automatically on push to master:
 
-- Builds and tests .NET server.
+- Builds .NET server.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## License
+### License
 
 Distributed under the project_license. See `LICENSE.txt` for more information.
 
