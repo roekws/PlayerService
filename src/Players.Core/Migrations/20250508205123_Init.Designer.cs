@@ -12,8 +12,8 @@ using Players.Core.Data;
 namespace Players.Core.Migrations
 {
     [DbContext(typeof(PlayerContext))]
-    [Migration("20250430130245_NewMigration")]
-    partial class NewMigration
+    [Migration("20250508205123_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -71,6 +71,13 @@ namespace Players.Core.Migrations
 
                     b.Property<long>("DotaId")
                         .HasColumnType("bigint");
+
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("PublicName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
