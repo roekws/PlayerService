@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
-using Players.API.Infrastructure.Context;
 using Players.API.Infrastructure.Validation;
 using Players.Core.Data;
 using Scalar.AspNetCore;
@@ -20,18 +19,10 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddOpenApi();
 
-builder.Services.AddScoped<PlayerRequestContext>();
-
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
   options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
-
-// var connection = $"Host={Environment.GetEnvironmentVariable("DB_HOST")};" +
-//   $"Port={Environment.GetEnvironmentVariable("DB_PORT")};" +
-//   $"Database={Environment.GetEnvironmentVariable("DB_NAME")};" +
-//   $"Username={Environment.GetEnvironmentVariable("DB_USER")};" +
-//   $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")};";
 
 builder.AddNpgsqlDbContext<PlayerContext>(connectionName: "postgresdb");
 

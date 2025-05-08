@@ -1,4 +1,3 @@
-using Players.API.Infrastructure.Context;
 using Players.API.Infrastructure.Errors;
 
 namespace Players.API.Infrastructure.Validation;
@@ -24,26 +23,23 @@ public class ValidationMiddleware(RequestDelegate next, IHostEnvironment env)
     var key = context.Request.Headers["X-Dedicated-Server-Key"].ToString();
     if (string.IsNullOrEmpty(key) || !IsValidDedicatedKey(key))
     {
-      context.Response.StatusCode = StatusCodes.Status403Forbidden;
+      context.Response.StatusCode = StatusCodes.Status401Unauthorized;
       return;
     }
 
     //Validate Dota Id
     if (!context.Request.Headers.TryGetValue("X-Dota-Id", out var dotaIdHeader))
     {
-      context.Response.StatusCode = StatusCodes.Status403Forbidden;
+      context.Response.StatusCode = StatusCodes.Status401Unauthorized;
       return;
     }
 
     if (!long.TryParse(dotaIdHeader, out var dotaId))
     {
       context.Response.StatusCode = 400;
-      await context.Response.WriteAsJsonAsync(ApiErrorResponse.Create(ApiErrors.InvalidDotaId));
+      await context.Response.WriteAsJsonAsync(new { Error = ApiErrors.InvalidDotaId });
       return;
     }
-
-    var playerContext = context.RequestServices.GetRequiredService<PlayerRequestContext>();
-    playerContext.DotaId = dotaId;
 
     await _next(context);
   }

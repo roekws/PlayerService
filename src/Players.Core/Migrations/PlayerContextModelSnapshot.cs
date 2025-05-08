@@ -69,6 +69,13 @@ namespace Players.Core.Migrations
                     b.Property<long>("DotaId")
                         .HasColumnType("bigint");
 
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("PublicName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DotaId")
