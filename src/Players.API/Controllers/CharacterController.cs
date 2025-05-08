@@ -1,7 +1,5 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Players.API.Infrastructure.Context;
 using Players.API.Infrastructure.Errors;
 using Players.API.Models;
 using Players.Core.Data;
@@ -12,86 +10,15 @@ namespace Players.API.Controllers;
 
 [ApiController]
 [Route("api/character")]
-public class CharacterController(PlayerContext context, PlayerRequestContext player) : ControllerBase
+public class CharacterController(PlayerContext context) : ControllerBase
 {
   private readonly PlayerContext _context = context;
-  private readonly PlayerRequestContext _player = player;
 
-
-  [HttpGet("list")]
-  public async Task<Results<Ok<List<CharacterInfoDto>>, NotFound<ApiErrorResponse>>> GetCharacters()
-  {
-    var player = await _context.Players.AnyAsync(player => player.DotaId == _player.DotaId);
-
-    if (!player)
-    {
-      return TypedResults.NotFound(ApiErrorResponse.Create(ApiErrors.PlayerNotFound));
-    }
-
-    var characters = await _context.Characters
-      .Where(character => character.PlayerId == _player.DotaId)
-      .OrderBy(character => character.CreatedAt)
-      .Select(c => new CharacterInfoDto(c.Id, c.Hero.ToString(), c.Level, c.Experience))
-      .ToListAsync();
-
-    return TypedResults.Ok(characters);
-  }
-
-  [HttpGet("{characterId}")]
-  public async Task<Results<Ok<CharacterInfoDto>, NotFound<ApiErrorResponse>>> GetCharacter(long characterId)
-  {
-    var characterDto = await _context.Characters
-      .Where(c => c.Id == characterId && c.PlayerId == _player.DotaId)
-      .Select(c => new CharacterInfoDto(c.Id, c.Hero.ToString(), c.Level, c.Experience))
-      .FirstOrDefaultAsync();
-
-    if (characterDto == null)
-    {
-      return TypedResults.NotFound(ApiErrorResponse.Create(ApiErrors.CharacterNotFound));
-    }
-
-    return TypedResults.Ok(characterDto);
-  }
-
-  [HttpPost("{characterId}/exp-change")]
-  public async Task<Results<Ok, NotFound<ApiErrorResponse>>> ChangeExp(long characterId, int expChange)
-  {
-    var character = await _context.Characters
-      .FirstOrDefaultAsync(c => c.Id == characterId && c.PlayerId == _player.DotaId);
-
-    if (character == null)
-    {
-      return TypedResults.NotFound(ApiErrorResponse.Create(ApiErrors.CharacterNotFound));
-    }
-
-    character.Experience += expChange;
-    await _context.SaveChangesAsync();
-
-    return TypedResults.Ok();
-  }
-
-  [HttpPost("{characterId}/level-up")]
-  public async Task<Results<Ok, NotFound<ApiErrorResponse>>> LevelUp(long characterId)
-  {
-    var character = await _context.Characters
-      .FirstOrDefaultAsync(c => c.Id == characterId && c.PlayerId == _player.DotaId);
-
-    if (character == null)
-    {
-      return TypedResults.NotFound(ApiErrorResponse.Create(ApiErrors.CharacterNotFound));
-    }
-
-    character.Level += 1;
-    await _context.SaveChangesAsync();
-
-    return TypedResults.Ok();
-  }
-
-  [HttpPost("create")]
-  public async Task<Results<Created, NotFound<ApiErrorResponse>, BadRequest<ApiErrorResponse>>> AddCharacter(string createHero)
+  [HttpPost("{dotaId}/create")]
+  public async Task<IResult> AddCharacter(long dotaId, string createHero)
   {
     var playerInfo = await _context.Players
-        .Where(p => p.DotaId == _player.DotaId)
+        .Where(p => p.DotaId == dotaId)
         .Select(p => new
         {
           Exists = true,
@@ -101,51 +28,108 @@ public class CharacterController(PlayerContext context, PlayerRequestContext pla
 
     if (playerInfo == null)
     {
-      return TypedResults.NotFound(ApiErrorResponse.Create(ApiErrors.PlayerNotFound));
+      return Results.NotFound(new { Error = ApiErrors.PlayerNotFound });
     }
 
     if (!playerInfo.CanCreate)
     {
-      return TypedResults.BadRequest(ApiErrorResponse.Create(ApiErrors.CharacterLimitReached));
+      return Results.BadRequest(new { Error = ApiErrors.CharacterLimitReached });
     }
 
     if (!Enum.TryParse(createHero, out Hero hero))
     {
-      return TypedResults.BadRequest(ApiErrorResponse.Create(ApiErrors.InvalidHero));
+      return Results.BadRequest(new { Error = ApiErrors.InvalidDotaId });
     }
 
-    var addCharacter = new Character() { PlayerId = _player.DotaId, Hero = hero };
+    var addCharacter = new Character() { PlayerId = dotaId, Hero = hero };
     _context.Characters.Add(addCharacter);
     await _context.SaveChangesAsync();
 
-    return TypedResults.Created();
+    return Results.Created();
   }
 
-  [HttpDelete("delete")]
-  public async Task<Results<NoContent, BadRequest<ApiErrorResponse>, NotFound<ApiErrorResponse>>> DeleteCharacter(long characterId)
+  [HttpGet("{characterId}")]
+  public async Task<IResult> GetCharacter(long characterId)
   {
-    var player = await _context.Players.FirstOrDefaultAsync(player => player.DotaId == _player.DotaId);
+    var character = await _context.Characters
+      .Where(c => c.Id == characterId)
+      .Select(c => new CharacterInfoDto(c.Id, c.Hero.ToString(), c.Level, c.Experience))
+      .FirstOrDefaultAsync();
 
-    if (player == null)
+    if (character == null)
     {
-      return TypedResults.BadRequest(ApiErrorResponse.Create(ApiErrors.PlayerNotFound));
+      return Results.NotFound(new { Error = ApiErrors.CharacterNotFound });
     }
+
+    return Results.Ok(character);
+  }
+
+  [HttpGet("list/{dotaId}")]
+  public async Task<IResult> GetCharacters(long dotaId)
+  {
+    var player = await _context.Players.AnyAsync(player => player.DotaId == dotaId);
+
+    if (!player)
+    {
+      return Results.NotFound(new { Error = ApiErrors.PlayerNotFound });
+    }
+
+    var characters = await _context.Characters
+      .Where(character => character.PlayerId == dotaId)
+      .OrderBy(character => character.CreatedAt)
+      .Select(c => new CharacterInfoDto(c.Id, c.Hero.ToString(), c.Level, c.Experience))
+      .ToListAsync();
+
+    return Results.Ok(characters);
+  }
+
+  [HttpPost("{characterId}/exp-change")]
+  public async Task<IResult> ChangeExp(long characterId, int expChange)
+  {
+    var character = await _context.Characters
+      .FirstOrDefaultAsync(c => c.Id == characterId);
+
+    if (character == null)
+    {
+      return Results.NotFound(new { Error = ApiErrors.CharacterNotFound });
+    }
+
+    character.Experience += expChange;
+    await _context.SaveChangesAsync();
+
+    return Results.Ok();
+  }
+
+  [HttpPost("{characterId}/level-up")]
+  public async Task<IResult> LevelUp(long characterId)
+  {
+    var character = await _context.Characters
+      .FirstOrDefaultAsync(c => c.Id == characterId);
+
+    if (character == null)
+    {
+      return Results.NotFound(new { Error = ApiErrors.CharacterNotFound });
+    }
+
+    character.Level += 1;
+    await _context.SaveChangesAsync();
+
+    return Results.Ok();
+  }
+
+  [HttpDelete("{characterId}/delete")]
+  public async Task<IResult> DeleteCharacter(long characterId)
+  {
 
     var deleteCharacter = await _context.Characters.FirstOrDefaultAsync(character => character.Id == characterId);
 
     if (deleteCharacter == null)
     {
-      return TypedResults.NotFound(ApiErrorResponse.Create(ApiErrors.CharacterNotFound));
-    }
-
-    if (deleteCharacter.PlayerId != player.Id)
-    {
-      return TypedResults.BadRequest(ApiErrorResponse.Create(ApiErrors.CharacterNotFound));
+      return Results.NotFound(new { Error = ApiErrors.CharacterNotFound });
     }
 
     _context.Characters.Remove(deleteCharacter);
     await _context.SaveChangesAsync();
-
-    return TypedResults.NoContent();
+    return Results.NoContent();
   }
 }
