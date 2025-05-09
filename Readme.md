@@ -22,7 +22,6 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#license">License</a></li>
   </ol>
 </details>
 
@@ -87,10 +86,3 @@ Setting up project locally.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-### License
-
-Copyright (c) 2025 roekws
-
-See `LICENSE.txt` for more information.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
