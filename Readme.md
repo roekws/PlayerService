@@ -74,10 +74,11 @@ Setting up project locally.
 
 1. Create a .env file in the project root with these variables (example values):
   ```sh
-  DB_NAME=players_db
-  DB_USER=postgres
-  DB_PASSWORD=securepassword123
-  API_KEY=dev-key-123
+  DB_NAME=dbname
+  DB_USER=dbuser
+  DB_PASSWORD=dbpassword
+  SERVER_KEY=serverkey
+  PUBLIC_KEY=publickey
   ASPNETCORE_ENVIRONMENT=Development
   ```
 

@@ -6,6 +6,24 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Validate configuraiton
+var missingVariables = new List<string>();
+
+if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("SERVER_KEY")))
+  missingVariables.Add("SERVER_KEY");
+
+if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PUBLIC_KEY")))
+  missingVariables.Add("PUBLIC_KEY");
+
+if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DB_CONNECTION")))
+  missingVariables.Add("DB_CONNECTION");
+
+if (missingVariables.Count > 0)
+{
+  throw new InvalidOperationException(
+    $"Missing required environment variables: {string.Join(", ", missingVariables)}. ");
+}
+
 builder.Services.AddCors(options =>
 {
   options.AddPolicy("AllowAll", policy =>

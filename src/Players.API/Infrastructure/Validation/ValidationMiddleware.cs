@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace Players.API.Infrastructure.Validation;
 
@@ -11,7 +12,8 @@ public class ValidationMiddleware(RequestDelegate next, IHostEnvironment env)
   public async Task InvokeAsync(HttpContext context)
   {
     // Skip validation for Scalar/OpenAPI in and Development
-    bool isDocumentationRoute = context.Request.Path.StartsWithSegments("/scalar") || context.Request.Path.StartsWithSegments("/openapi");
+    bool isDocumentationRoute = context.Request.Path.StartsWithSegments("/scalar") ||
+      context.Request.Path.StartsWithSegments("/openapi");
 
     if (_env.IsDevelopment() && isDocumentationRoute)
     {
@@ -19,13 +21,7 @@ public class ValidationMiddleware(RequestDelegate next, IHostEnvironment env)
       return;
     }
 
-    if (!IsValidDedicatedKey(context))
-    {
-      context.Response.StatusCode = StatusCodes.Status404NotFound;
-      return;
-    }
-
-    if (!IsValidDotaId(context))
+    if (!IsValidGameClient(context) && !IsValidPublicClient(context))
     {
       context.Response.StatusCode = StatusCodes.Status404NotFound;
       return;
@@ -36,12 +32,23 @@ public class ValidationMiddleware(RequestDelegate next, IHostEnvironment env)
 
   public static class AuthHeaders
   {
-    public const string ApiKey = "X-Dedicated-Server-Key";
+    public const string DedicatedKey = "X-Dedicated-Server-Key";
+    public const string PublicKey = "X-Api-Key";
     public const string DotaId = "X-Dota-Id";
   }
 
-  private bool IsValidDotaId(HttpContext context)
+  private bool IsValidGameClient(HttpContext context)
   {
+    if (!context.Request.Headers.TryGetValue(AuthHeaders.DedicatedKey, out var keyHeader))
+    {
+      return false;
+    }
+
+    if (!ValidateKey(keyHeader.ToString(), "SERVER_KEY"))
+    {
+      return false;
+    }
+
     if (!context.Request.Headers.TryGetValue(AuthHeaders.DotaId, out var dotaIdHeader))
     {
       return false;
@@ -52,27 +59,39 @@ public class ValidationMiddleware(RequestDelegate next, IHostEnvironment env)
       return false;
     }
 
+    context.Items["Client"] = "Game";
+    context.Items["DotaId"] = dotaId;
     return true;
   }
 
-  private bool IsValidDedicatedKey(HttpContext context)
+  private bool IsValidPublicClient(HttpContext context)
   {
-    if (!context.Request.Headers.TryGetValue(AuthHeaders.ApiKey, out var keyHeader))
-    {
-      return false;
-    }
-    var keyHeaderString = keyHeader.ToString();
-
-    var validKey = Environment.GetEnvironmentVariable("API_KEY");
-
-    if (string.IsNullOrEmpty(keyHeaderString) || string.IsNullOrEmpty(validKey))
+    if (!context.Request.Headers.TryGetValue(AuthHeaders.PublicKey, out var keyHeader))
     {
       return false;
     }
 
-    var keyHeaderBytes = Encoding.UTF8.GetBytes(keyHeaderString);
+    if (!ValidateKey(keyHeader.ToString(), "PUBLIC_KEY"))
+    {
+      return false;
+    }
+
+    context.Items["Client"] = "Public";
+    return true;
+  }
+
+  private bool ValidateKey(string providedKey, string environmentKeyName)
+  {
+    var validKey = Environment.GetEnvironmentVariable(environmentKeyName);
+
+    if (string.IsNullOrEmpty(providedKey) || string.IsNullOrEmpty(validKey))
+    {
+      return false;
+    }
+
+    var providedKeyBytes = Encoding.UTF8.GetBytes(providedKey);
     var validKeyBytes = Encoding.UTF8.GetBytes(validKey);
 
-    return CryptographicOperations.FixedTimeEquals(keyHeaderBytes, validKeyBytes);
+    return CryptographicOperations.FixedTimeEquals(providedKeyBytes, validKeyBytes);
   }
 }
