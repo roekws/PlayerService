@@ -6,11 +6,12 @@ services:
     ports:
       - 8080:8080
     environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
+      DB_CONNECTION: Host=players.database;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};
       API_KEY: ${API_KEY}
-      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
     depends_on:
       players.database:
         condition: service_healthy

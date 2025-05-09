@@ -23,11 +23,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
   options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-var connection = $"Host=players.database;" +
-  $"Port=5432;" +
-  $"Database={Environment.GetEnvironmentVariable("DB_NAME")};" +
-  $"Username={Environment.GetEnvironmentVariable("DB_USER")};" +
-  $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")};";
+var connection = Environment.GetEnvironmentVariable("DB_CONNECTION");
 
 builder.Services.AddDbContext<PlayerContext>(options => options.UseNpgsql(connection));
 
