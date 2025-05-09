@@ -22,7 +22,6 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#ci-workflow">CI Workflow</a></li>
     <li><a href="#license">License</a></li>
   </ol>
 </details>
@@ -33,17 +32,9 @@ A backend service for managing player's character data.
 
 ### Project Structure
 
-- src/Players.AppHost - The .NET project that orchestrates the app model
-- src/Players.ServiceDefaults:
-  - Configures OpenTelemetry metrics and tracing.
-  - Adds default health check endpoints.
-  - Adds service discovery functionality.
-  - Configures HttpClient to work with service discovery.
-
 - src/Players.API - Web API for player data management
 - src/Players.Core - Domain classes, context and migrations
 - src/Players.Tests - tests
-
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -96,16 +87,10 @@ Setting up project locally.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-### CI Workflow
-
-CI workflow performs runs automatically on push to master:
-
-- Builds .NET server.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 ### License
 
-Distributed under the project_license. See `LICENSE.txt` for more information.
+Copyright (c) 2025 roekws
+
+See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
