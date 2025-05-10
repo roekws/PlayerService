@@ -1,6 +1,10 @@
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.EntityFrameworkCore;
-using Players.API.Infrastructure.Validation;
+using Microsoft.OpenApi.Models;
+using Players.API.Infrastructure.Authentication;
+using Players.API.Infrastructure.Authorization.Claims;
 using Players.Core.Data;
 using Scalar.AspNetCore;
 
@@ -10,19 +14,38 @@ var builder = WebApplication.CreateBuilder(args);
 var missingVariables = new List<string>();
 
 if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("SERVER_KEY")))
+{
   missingVariables.Add("SERVER_KEY");
-
-if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PUBLIC_KEY")))
-  missingVariables.Add("PUBLIC_KEY");
+}
 
 if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DB_CONNECTION")))
+{
   missingVariables.Add("DB_CONNECTION");
+}
+
+if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ADMIN_KEY")))
+{
+  missingVariables.Add("ADMIN_KEY");
+}
 
 if (missingVariables.Count > 0)
 {
   throw new InvalidOperationException(
     $"Missing required environment variables: {string.Join(", ", missingVariables)}. ");
 }
+
+builder.Services
+  .AddAuthentication("GameAuth")
+  .AddScheme<AuthSchemeOptions, AuthHandler>("GameAuth", null);
+
+builder.Services.AddAuthorization(options =>
+{
+  options.AddPolicy("GameOnly", policy =>
+    policy.RequireClaim(PlayersClaimTypes.ClientType, PlayersClientTypes.Game));
+
+  options.AddPolicy("AdminOnly", policy =>
+    policy.RequireClaim(PlayersClaimTypes.ClientType, PlayersClientTypes.Admin));
+});
 
 builder.Services.AddCors(options =>
 {
@@ -47,6 +70,9 @@ builder.Services.AddDbContext<PlayerContext>(options => options.UseNpgsql(connec
 
 var app = builder.Build();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 if (app.Environment.IsDevelopment())
 {
   app.UseCors("AllowAll");
@@ -65,9 +91,6 @@ else
   app.UseHttpsRedirection();
 }
 
-app.UseMiddleware<ValidationMiddleware>();
-
 app.MapControllers();
 
 app.Run();
-

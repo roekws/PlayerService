@@ -12,7 +12,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_CONNECTION: Host=players.database;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};
       SERVER_KEY: ${SERVER_KEY}
-      PUBLIC_KEY: ${PUBLIC_KEY}
+      ADMIN_KEY: ${ADMIN_KEY}
     depends_on:
       players.database:
         condition: service_healthy

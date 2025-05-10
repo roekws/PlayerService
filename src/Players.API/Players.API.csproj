@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Players.Core\Players.Core.csproj" />
-    <ProjectReference Include="..\Players.ServiceDefaults\Players.ServiceDefaults.csproj" />
   </ItemGroup>
 
 </Project>

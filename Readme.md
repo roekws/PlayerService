@@ -20,6 +20,7 @@
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
+        <li><a href="#sources">Sources</a></li>
       </ul>
     </li>
   </ol>
@@ -68,7 +69,7 @@ Setting up project locally.
   DB_USER=dbuser
   DB_PASSWORD=dbpassword
   SERVER_KEY=serverkey
-  PUBLIC_KEY=publickey
+  ADMIN_KEY=adminkey
   ASPNETCORE_ENVIRONMENT=Development
   ```
 
@@ -86,3 +87,11 @@ Setting up project locally.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+### Sources
+
+- [API Key Authentication](https://habr.com/ru/articles/877302/)
+- [Claims-based authorization in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/claims?view=aspnetcore-9.0)
+- [.NET Docker](https://docs.docker.com/guides/dotnet/)
+- []()
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
