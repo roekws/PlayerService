@@ -1,6 +1,4 @@
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
@@ -11,13 +9,13 @@ namespace Players.API.Infrastructure.Authentication;
 public class AuthHandler : AuthenticationHandler<AuthSchemeOptions>
 {
   // Precomputed keys
-  private static readonly byte[] _serverKeyBytes;
-  private static readonly byte[] _adminKeyBytes;
+  private static readonly string _serverKey;
+  private static readonly string _adminKey;
 
   static AuthHandler()
   {
-    _serverKeyBytes = GetKeyBytes("SERVER_KEY");
-    _adminKeyBytes = GetKeyBytes("ADMIN_KEY");
+    _serverKey = Environment.GetEnvironmentVariable("SERVER_KEY");
+    _adminKey = Environment.GetEnvironmentVariable("ADMIN_KEY");
   }
 
   public AuthHandler(IOptionsMonitor<AuthSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
@@ -31,15 +29,13 @@ public class AuthHandler : AuthenticationHandler<AuthSchemeOptions>
       return AuthenticateResult.NoResult();
     }
 
-    var providedKeyBytes = Encoding.UTF8.GetBytes(keyHeader.ToString());
-
     var claims = new List<Claim>();
 
-    if (CryptographicOperations.FixedTimeEquals(providedKeyBytes, _serverKeyBytes))
+    if (string.Equals(keyHeader.ToString(), _serverKey))
     {
       claims.Add(new Claim(PlayersClaimTypes.ClientType, PlayersClientTypes.Game));
     }
-    else if (CryptographicOperations.FixedTimeEquals(providedKeyBytes, _adminKeyBytes))
+    else if (string.Equals(keyHeader.ToString(), _adminKey))
     {
       claims.Add(new Claim(PlayersClaimTypes.ClientType, PlayersClientTypes.Admin));
     }
@@ -63,17 +59,5 @@ public class AuthHandler : AuthenticationHandler<AuthSchemeOptions>
     var identity = new ClaimsIdentity(claims, "GameAuth");
     var principal = new ClaimsPrincipal(identity);
     return AuthenticateResult.Success(new AuthenticationTicket(principal, Scheme.Name));
-  }
-
-  private static byte[] GetKeyBytes(string envVarName)
-  {
-    var key = Environment.GetEnvironmentVariable(envVarName);
-
-    if (!string.IsNullOrEmpty(key))
-    {
-      return Encoding.UTF8.GetBytes(key);
-    }
-
-    return Array.Empty<byte>();
   }
 }
