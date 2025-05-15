@@ -69,16 +69,22 @@ namespace Players.Core.Migrations
                     b.Property<long>("DotaId")
                         .HasColumnType("bigint");
 
-                    b.Property<bool>("IsPublic")
+                    b.Property<bool>("IsPublicForLadder")
                         .HasColumnType("boolean");
 
                     b.Property<string>("PublicName")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<long>("SteamId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DotaId")
+                        .IsUnique();
+
+                    b.HasIndex("SteamId")
                         .IsUnique();
 
                     b.ToTable("Players");

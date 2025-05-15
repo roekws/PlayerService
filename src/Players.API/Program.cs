@@ -1,8 +1,5 @@
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.OpenApi;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using Players.API.Infrastructure.Authentication;
 using Players.API.Infrastructure.Authorization.Claims;
 using Players.Core.Data;

@@ -13,5 +13,9 @@ public static class ApiErrors
   public const string InvalidHero = "#invalid_hero";
 
   // Validation
-  public const string InvalidDotaId = "#invalid_dota_id";
+  public const string DotaIsMissing = "#dota_id_is_missing";
+  public const string SteamIdIsMissing = "#steam_id_is_missing";
+  public const string DotaIdIsInvalid = "#invalid_dota_id";
+  public const string SteamIdIsInvalid = "#invalid_steam_id";
+  public const string KeyIsInvalid = "#invalid_key";
 }

@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Players.Core.Migrations
 {
     /// <inheritdoc />
-    public partial class NewMigration : Migration
+    public partial class AddedSteamId : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,8 +19,9 @@ namespace Players.Core.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     DotaId = table.Column<long>(type: "bigint", nullable: false),
+                    SteamId = table.Column<long>(type: "bigint", nullable: false),
                     PublicName = table.Column<string>(type: "text", nullable: false),
-                    IsPublic = table.Column<bool>(type: "boolean", nullable: false),
+                    IsPublicForLadder = table.Column<bool>(type: "boolean", nullable: false),
                     CharactersLimit = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -61,6 +62,12 @@ namespace Players.Core.Migrations
                 name: "IX_Players_DotaId",
                 table: "Players",
                 column: "DotaId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Players_SteamId",
+                table: "Players",
+                column: "SteamId",
                 unique: true);
         }
 

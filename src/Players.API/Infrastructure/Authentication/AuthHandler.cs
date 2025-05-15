@@ -3,6 +3,8 @@ using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using Players.API.Infrastructure.Authorization.Claims;
+using Players.API.Infrastructure.Errors;
+using Scalar.AspNetCore;
 
 namespace Players.API.Infrastructure.Authentication;
 
@@ -41,20 +43,31 @@ public class AuthHandler : AuthenticationHandler<AuthSchemeOptions>
     }
     else
     {
-      return AuthenticateResult.Fail("Invalid key");
+      return AuthenticateResult.Fail(ApiErrors.KeyIsInvalid);
     }
 
-    if (!Request.Headers.TryGetValue(AuthHeaders.DotaId, out var inputId))
+    if (!Request.Headers.TryGetValue(AuthHeaders.DotaId, out var inputDotaId))
     {
-      return AuthenticateResult.Fail("Dota id not provided");
+      return AuthenticateResult.Fail(ApiErrors.DotaIsMissing);
     }
 
-    if (!long.TryParse(inputId.ToString(), out var dotaId))
+    if (!long.TryParse(inputDotaId.ToString(), out var dotaId))
     {
-      return AuthenticateResult.Fail("Dota id is not valid");
+      return AuthenticateResult.Fail(ApiErrors.DotaIdIsInvalid);
+    }
+
+    if (!Request.Headers.TryGetValue(AuthHeaders.SteamId, out var inputSteamId))
+    {
+      return AuthenticateResult.Fail(ApiErrors.SteamIdIsMissing);
+    }
+
+    if (!long.TryParse(inputSteamId.ToString(), out var steamId))
+    {
+      return AuthenticateResult.Fail(ApiErrors.SteamIdIsInvalid);
     }
 
     claims.Add(new Claim(PlayersClaimTypes.DotaId, dotaId.ToString()));
+    claims.Add(new Claim(PlayersClaimTypes.SteamId, steamId.ToString()));
 
     var identity = new ClaimsIdentity(claims, "GameAuth");
     var principal = new ClaimsPrincipal(identity);

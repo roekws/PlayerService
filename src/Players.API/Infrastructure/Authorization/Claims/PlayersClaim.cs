@@ -4,5 +4,6 @@ public static class PlayersClaimTypes
 {
   public const string ClientType = "ClientType";
   public const string DotaId = "DotaId";
+  public const string SteamId = "SteamId";
 }
 

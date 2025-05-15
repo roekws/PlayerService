@@ -27,6 +27,12 @@ public class PlayerContext : DbContext
       entity.HasIndex(e => e.DotaId)
         .IsUnique();
 
+      entity.Property(e => e.SteamId)
+        .IsRequired();
+
+      entity.HasIndex(e => e.SteamId)
+        .IsUnique();
+
       entity.HasMany(e => e.Characters)
         .WithOne(e => e.Player)
         .HasForeignKey(e => e.PlayerId)
