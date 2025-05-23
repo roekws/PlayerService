@@ -28,7 +28,15 @@
 
 ## About
 
-A backend service for managing player's character data.
+A backend service for managing game data.
+
+Game loop:
+- Pick hero, skills, base structures
+- Battle against same strength bases
+
+Database structure:
+
+![Database structure](https://raw.githubusercontent.com/roekws/PlayerService/main/Documentation/db.png)
 
 ### Project Structure
 
