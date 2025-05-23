@@ -36,7 +36,7 @@ Game loop:
 
 Database structure:
 
-![Database structure](https://raw.githubusercontent.com/roekws/PlayerService/main/Documentation/db.png)
+![Database structure](https://github.com/roekws/PlayerService/raw/master/Documentation/db.png "Db")
 
 ### Project Structure
 
