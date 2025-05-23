@@ -34,9 +34,7 @@ Game loop:
 - Pick hero, skills, base structures
 - Battle against same strength bases
 
-Database structure:
-
-![Database structure](https://github.com/roekws/PlayerService/raw/master/Documentation/db.png "Db")
+[Database structure](https://github.com/roekws/PlayerService/raw/master/Documentation/db.png "Db")
 
 ### Project Structure
 
