@@ -1,18 +1,23 @@
-﻿using Players.Core.Common;
+﻿namespace Players.Core.Entities;
 
-namespace Players.Core.Entities;
-
-public class Player : BaseEntity
+public class Player
 {
-  public long DotaId { get; set; }
+  public long Id { get; set; }
 
+  public long DotaId { get; set; }
   public long SteamId { get; set; }
 
   public string PublicName { get; set; } = "Anonym";
-
   public bool IsPublicForLadder { get; set; } = false;
 
-  public int CharactersLimit { get; set; } = 5;
+  public int Rating { get; set; } = 0;
 
-  public ICollection<Character> Characters { get; set; } = []; // Collection navigation containing dependents
+  public DateTime LastActivity { get; set; } = DateTime.UtcNow;
+  public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+  public long CurrentMatchId { get; set; }
+
+  // Navigation properties
+  public ICollection<Match> Matches { get; set; } = [];
+  public ICollection<MatchBattle> MatchesBattles { get; set; } = [];
 }

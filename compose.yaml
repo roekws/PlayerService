@@ -1,5 +1,5 @@
 services:
-  player.api:
+  api:
     env_file:
       - path: ./.env
         required: true
@@ -13,11 +13,11 @@ services:
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
-      DB_CONNECTION: Host=players.database;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};
+      DB_CONNECTION: Host=database;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};
       SERVER_KEY: ${SERVER_KEY}
       ADMIN_KEY: ${ADMIN_KEY}
     depends_on:
-      players.database:
+      database:
         condition: service_healthy
     develop:
       watch:
@@ -29,7 +29,7 @@ services:
     #       cpus: '0.5'
     #       memory: 512M
 
-  players.database:
+  database:
     image: postgres:16-alpine
     restart: always
     environment:
