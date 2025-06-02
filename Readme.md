@@ -91,6 +91,11 @@ Setting up project locally.
    docker-compose down
    ```
 
+5. Develop with:
+    ```sh
+   docker compose watch
+   ```
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Sources
