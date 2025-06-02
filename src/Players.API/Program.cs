@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Players.API.Infrastructure.Authentication;
@@ -64,10 +65,19 @@ builder.Services.AddOpenApi(options =>
       operation.Parameters = new List<OpenApiParameter>();
     }
 
+    var endpointMetadata = context.Description.ActionDescriptor.EndpointMetadata;
+
+    // Skip if [AllowAnonymous] exists
+    if (endpointMetadata.Any(em => em is AllowAnonymousAttribute))
+    {
+      return Task.CompletedTask;
+    }
+
     operation.Parameters.Add(new OpenApiParameter
     {
       Name = AuthHeaders.DedicatedKey,
       In = ParameterLocation.Header,
+      Required = true,
       Schema = new OpenApiSchema { Type = "string" }
     });
 
@@ -75,21 +85,24 @@ builder.Services.AddOpenApi(options =>
     {
       Name = AuthHeaders.DotaId,
       In = ParameterLocation.Header,
-      Schema = new OpenApiSchema { Type = "string" }
+      Required = true,
+      Schema = new OpenApiSchema { Type = "long" }
     });
 
     operation.Parameters.Add(new OpenApiParameter
     {
       Name = AuthHeaders.SteamId,
       In = ParameterLocation.Header,
-      Schema = new OpenApiSchema { Type = "string" }
+      Required = true,
+      Schema = new OpenApiSchema { Type = "long" }
     });
 
     operation.Parameters.Add(new OpenApiParameter
     {
       Name = AuthHeaders.GameClientVersion,
       In = ParameterLocation.Header,
-      Schema = new OpenApiSchema { Type = "string" }
+      Required = true,
+      Schema = new OpenApiSchema { Type = "long" }
     });
 
     return Task.CompletedTask;

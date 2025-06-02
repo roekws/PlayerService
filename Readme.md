@@ -84,7 +84,15 @@ Setting up project locally.
    docker-compose up --build
    ```
 
-3. Access the API at: http://127.0.0.1:8080/scalar/
+3. Access the Interactive API Doc at:
+  ```sh
+  http://127.0.0.1:8080/scalar/
+  ```
+
+  OpenApi Doc:
+  ```sh
+  http://localhost:8080/openapi/v1.json
+  ```
 
 4. Stop with:
    ```sh

@@ -2,7 +2,7 @@ using Players.Core.Entities;
 
 namespace Players.API.Models;
 
-public class PlayerInfoDto
+public class PlayerDto
 {
   public long Id { get; set; }
 
@@ -14,14 +14,14 @@ public class PlayerInfoDto
 
   public double Rating { get; set; }
 
-  public string? LastActivityTime { get; set; }
-  public string? CreatedAt { get; set; }
+  public DateTime? LastActivityTime { get; set; }
+  public DateTime? CreatedAt { get; set; }
 
   public string? CurrentMatchId { get; set; }
 
-  public PlayerInfoDto() { }
+  public PlayerDto() { }
 
-  public PlayerInfoDto(Player player, bool anonymous = false)
+  public PlayerDto(Player player, bool anonymous = false)
   {
     var showPrivateData = !anonymous || player.IsPublicForLadder;
 
@@ -31,8 +31,8 @@ public class PlayerInfoDto
     PublicName = player.PublicName;
     IsPublicForLadder = player.IsPublicForLadder;
     Rating = player.Rating;
-    LastActivityTime = showPrivateData ? player.LastActivity.ToString("o") : "Anonym";
-    CreatedAt = showPrivateData ? player.CreatedAt.ToString("o") : "Anonym";
+    LastActivityTime = showPrivateData ? player.LastActivity : DateTime.MinValue;
+    CreatedAt = showPrivateData ? player.CreatedAt : DateTime.MinValue;
     CurrentMatchId = showPrivateData ? player.CurrentMatchId.ToString() : "Anonym";
   }
 }
