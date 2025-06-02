@@ -1,15 +1,18 @@
+using System.Text.Json.Serialization;
+
 namespace Players.Core.Entities;
 
-public class StructureAbility
+public class BuildingAbility
 {
   public long Id { get; set; }
 
-  public long StructureId { get; set; }
+  public long BuildingId { get; set; }
 
   public required string Name { get; set; }
 
   public long Level { get; set; } = 1;
 
   // Navigation properties
-  public Structure Structure { get; set; } = null!;
+  [JsonIgnore]
+  public Building Building { get; set; } = null!;
 }

@@ -1,14 +1,15 @@
+using System.Text.Json.Serialization;
+
 namespace Players.Core.Entities;
 
-public class Structure
+public class Building
 {
   public long Id { get; set; }
 
-
-  public long BaseId { get; set; }
+  public long CityId { get; set; }
 
   public required string Name { get; set; }
-  
+
   public int Level { get; set; }
   public int Experience { get; set; }
   public int Health { get; set; }
@@ -19,6 +20,7 @@ public class Structure
   public int Rotation { get; set; }
 
   // Navigation properties
-  public Base Base { get; set; } = null!;
-  public ICollection<StructureAbility> Abilities { get; set; } = [];
+  [JsonIgnore]
+  public City City { get; set; } = null!;
+  public ICollection<BuildingAbility> Abilities { get; set; } = [];
 }

@@ -1,6 +1,8 @@
+using System.Text.Json.Serialization;
+
 namespace Players.Core.Entities;
 
-public class Base
+public class City
 {
   public long Id { get; set; }
 
@@ -8,6 +10,7 @@ public class Base
   public int Health { get; set; }
 
   // Navigation properties
+  [JsonIgnore]
   public Match Match { get; set; } = null!;
-  public ICollection<Structure> Structures { get; set; } = [];
+  public ICollection<Building> Buildings { get; set; } = [];
 }
