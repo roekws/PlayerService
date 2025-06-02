@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Players.API.Infrastructure.Authentication;
 using Players.API.Infrastructure.Authorization.Claims;
 using Players.Core.Data;
@@ -54,7 +55,39 @@ builder.Services.AddCors(options =>
   });
 });
 
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+  options.AddOperationTransformer((operation, context, cancellationToken) =>
+  {
+    if (operation.Parameters == null)
+    {
+      operation.Parameters = new List<OpenApiParameter>();
+    }
+
+    operation.Parameters.Add(new OpenApiParameter
+    {
+      Name = "X-Dedicated-Server-Key",
+      In = ParameterLocation.Header,
+      Schema = new OpenApiSchema { Type = "string" }
+    });
+
+    operation.Parameters.Add(new OpenApiParameter
+    {
+      Name = "X-Dota-Id",
+      In = ParameterLocation.Header,
+      Schema = new OpenApiSchema { Type = "string" }
+    });
+
+    operation.Parameters.Add(new OpenApiParameter
+    {
+      Name = "X-Steam-Id",
+      In = ParameterLocation.Header,
+      Schema = new OpenApiSchema { Type = "string" }
+    });
+
+    return Task.CompletedTask;
+  });
+});
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
