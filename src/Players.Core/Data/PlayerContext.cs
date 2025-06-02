@@ -7,9 +7,9 @@ public class PlayerContext : DbContext
 {
   public DbSet<Player> Players { get; set; }
   public DbSet<Match> Matches { get; set; }
-  public DbSet<Base> Bases { get; set; }
-  public DbSet<Structure> Structures { get; set; }
-  public DbSet<StructureAbility> StructureAbilities { get; set; }
+  public DbSet<City> Cities { get; set; }
+  public DbSet<Building> Buildings { get; set; }
+  public DbSet<BuildingAbility> BuildingAbilities { get; set; }
   public DbSet<Character> Characters { get; set; }
   public DbSet<CharacterItem> CharacterItems { get; set; }
   public DbSet<CharacterAbility> CharacterAbilities { get; set; }
@@ -52,9 +52,9 @@ public class PlayerContext : DbContext
 
       entity.HasIndex(e => e.Level);
 
-      entity.HasOne(e => e.Base)
+      entity.HasOne(e => e.City)
         .WithOne(e => e.Match)
-        .HasForeignKey<Match>(e => e.BaseId)
+        .HasForeignKey<Match>(e => e.CityId)
         .IsRequired();
 
       entity.HasOne(e => e.Character)
@@ -67,29 +67,29 @@ public class PlayerContext : DbContext
         .HasForeignKey(e => e.MatchId);
     });
 
-    modelBuilder.Entity<Base>(entity =>
+    modelBuilder.Entity<City>(entity =>
     {
       entity.HasKey(e => e.Id);
       entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
-      entity.HasMany(e => e.Structures)
-        .WithOne(e => e.Base)
-        .HasForeignKey(e => e.BaseId)
+      entity.HasMany(e => e.Buildings)
+        .WithOne(e => e.City)
+        .HasForeignKey(e => e.CityId)
         .IsRequired();
     });
 
-    modelBuilder.Entity<Structure>(entity =>
+    modelBuilder.Entity<Building>(entity =>
     {
       entity.HasKey(e => e.Id);
       entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
       entity.HasMany(e => e.Abilities)
-        .WithOne(e => e.Structure)
-        .HasForeignKey(e => e.StructureId)
+        .WithOne(e => e.Building)
+        .HasForeignKey(e => e.BuildingId)
         .IsRequired();
     });
 
-    modelBuilder.Entity<StructureAbility>(entity =>
+    modelBuilder.Entity<BuildingAbility>(entity =>
     {
       entity.HasKey(e => e.Id);
       entity.Property(e => e.Id).ValueGeneratedOnAdd();

@@ -1,6 +1,6 @@
 namespace Players.Core.Enums;
 
-public enum MatchResultType : ushort
+public enum MatchState : ushort
 {
   Win = 0,
 
@@ -8,5 +8,7 @@ public enum MatchResultType : ushort
 
   Abandon = 2,
 
-  Cancel = 3
+  Cancel = 3,
+
+  Active = 4
 }

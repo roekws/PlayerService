@@ -1,4 +1,6 @@
-﻿namespace Players.Core.Entities;
+﻿using System.Text.Json.Serialization;
+
+namespace Players.Core.Entities;
 
 public class Player
 {
@@ -18,6 +20,8 @@ public class Player
   public long CurrentMatchId { get; set; }
 
   // Navigation properties
+  [JsonIgnore]
   public ICollection<Match> Matches { get; set; } = [];
+  [JsonIgnore]
   public ICollection<MatchBattle> MatchesBattles { get; set; } = [];
 }
