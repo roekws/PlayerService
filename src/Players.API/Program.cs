@@ -66,21 +66,28 @@ builder.Services.AddOpenApi(options =>
 
     operation.Parameters.Add(new OpenApiParameter
     {
-      Name = "X-Dedicated-Server-Key",
+      Name = AuthHeaders.DedicatedKey,
       In = ParameterLocation.Header,
       Schema = new OpenApiSchema { Type = "string" }
     });
 
     operation.Parameters.Add(new OpenApiParameter
     {
-      Name = "X-Dota-Id",
+      Name = AuthHeaders.DotaId,
       In = ParameterLocation.Header,
       Schema = new OpenApiSchema { Type = "string" }
     });
 
     operation.Parameters.Add(new OpenApiParameter
     {
-      Name = "X-Steam-Id",
+      Name = AuthHeaders.SteamId,
+      In = ParameterLocation.Header,
+      Schema = new OpenApiSchema { Type = "string" }
+    });
+
+    operation.Parameters.Add(new OpenApiParameter
+    {
+      Name = AuthHeaders.GameClientVersion,
       In = ParameterLocation.Header,
       Schema = new OpenApiSchema { Type = "string" }
     });

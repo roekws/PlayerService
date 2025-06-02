@@ -66,8 +66,19 @@ public class AuthHandler : AuthenticationHandler<AuthSchemeOptions>
       return AuthenticateResult.Fail(ApiErrors.SteamIdIsInvalid);
     }
 
+    if (!Request.Headers.TryGetValue(AuthHeaders.GameClientVersion, out var inputGameClientVersion))
+    {
+      return AuthenticateResult.Fail(ApiErrors.GameClientVersionIsMissing);
+    }
+
+    if (!long.TryParse(inputGameClientVersion.ToString(), out var gameClientVersion))
+    {
+      return AuthenticateResult.Fail(ApiErrors.GameClientVersionIsInvalid);
+    }
+
     claims.Add(new Claim(PlayersClaimTypes.DotaId, dotaId.ToString()));
     claims.Add(new Claim(PlayersClaimTypes.SteamId, steamId.ToString()));
+    claims.Add(new Claim(PlayersClaimTypes.GameClientVersion, gameClientVersion.ToString()));
 
     var identity = new ClaimsIdentity(claims, "GameAuth");
     var principal = new ClaimsPrincipal(identity);
