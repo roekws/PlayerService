@@ -1,5 +1,6 @@
 {
   "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 10000,
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
   "files.exclude": {
