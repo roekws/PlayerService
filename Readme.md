@@ -86,7 +86,7 @@ Setting up project locally.
 
 3. Access the Interactive API Doc at:
   ```sh
-  http://127.0.0.1:8080/scalar/
+  http://localhost:8080/scalar/
   ```
 
   OpenApi Doc:
