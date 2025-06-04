@@ -207,9 +207,9 @@ namespace Players.Core.Migrations
                     ExperienceChange = table.Column<int>(type: "integer", nullable: false),
                     Number = table.Column<int>(type: "integer", nullable: false),
                     EnemyCharacterSnapshotJson = table.Column<string>(type: "jsonb", nullable: true),
-                    EnemyBaseSnapshotJson = table.Column<string>(type: "jsonb", nullable: true),
+                    EnemyCitySnapshotJson = table.Column<string>(type: "jsonb", nullable: true),
                     PlayerCharacterSnapshotJson = table.Column<string>(type: "jsonb", nullable: true),
-                    PlayerBaseSnapshotJson = table.Column<string>(type: "jsonb", nullable: true),
+                    PlayerCitySnapshotJson = table.Column<string>(type: "jsonb", nullable: true),
                     State = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>

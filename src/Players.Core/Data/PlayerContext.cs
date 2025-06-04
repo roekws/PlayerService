@@ -130,12 +130,12 @@ public class PlayerContext : DbContext
 
       entity.Property(e => e.EnemyCharacterSnapshotJson)
         .HasColumnType("jsonb");
-      entity.Property(e => e.EnemyBaseSnapshotJson)
+      entity.Property(e => e.EnemyCitySnapshotJson)
         .HasColumnType("jsonb");
 
       entity.Property(e => e.PlayerCharacterSnapshotJson)
         .HasColumnType("jsonb");
-      entity.Property(e => e.PlayerBaseSnapshotJson)
+      entity.Property(e => e.PlayerCitySnapshotJson)
         .HasColumnType("jsonb");
     });
   }

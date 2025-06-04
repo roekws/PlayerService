@@ -12,7 +12,7 @@ using Players.Core.Data;
 namespace Players.Core.Migrations
 {
     [DbContext(typeof(PlayerContext))]
-    [Migration("20250602195645_NewMigration")]
+    [Migration("20250604110136_NewMigration")]
     partial class NewMigration
     {
         /// <inheritdoc />
@@ -254,10 +254,10 @@ namespace Players.Core.Migrations
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("EnemyBaseSnapshotJson")
+                    b.Property<string>("EnemyCharacterSnapshotJson")
                         .HasColumnType("jsonb");
 
-                    b.Property<string>("EnemyCharacterSnapshotJson")
+                    b.Property<string>("EnemyCitySnapshotJson")
                         .HasColumnType("jsonb");
 
                     b.Property<long>("EnemyPlayerId")
@@ -275,10 +275,10 @@ namespace Players.Core.Migrations
                     b.Property<int>("Number")
                         .HasColumnType("integer");
 
-                    b.Property<string>("PlayerBaseSnapshotJson")
+                    b.Property<string>("PlayerCharacterSnapshotJson")
                         .HasColumnType("jsonb");
 
-                    b.Property<string>("PlayerCharacterSnapshotJson")
+                    b.Property<string>("PlayerCitySnapshotJson")
                         .HasColumnType("jsonb");
 
                     b.Property<DateTime>("StartTime")
