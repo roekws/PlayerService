@@ -57,7 +57,7 @@ public class PlayerController(PlayerContext context) : ControllerBase
 
     if (player == null)
     {
-      return NotFound(new { Error = ApiErrors.PlayerNotFound });
+      return NotFound(new ErrorResponse(ApiErrors.PlayerNotFound));
     }
 
     return Ok(new PlayerDto(player));
@@ -99,7 +99,7 @@ public class PlayerController(PlayerContext context) : ControllerBase
   [Authorize(Policy = "GameOnly")]
   [HttpGet]
   [ProducesResponseType<PlayerDto>(StatusCodes.Status200OK)]
-  [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
+  [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   public async Task<ActionResult<PlayerDto>> GetPlayerSelf()
   {
@@ -110,7 +110,7 @@ public class PlayerController(PlayerContext context) : ControllerBase
 
     if (player == null)
     {
-      return NotFound(new { Error = ApiErrors.PlayerNotFound });
+      return NotFound(new ErrorResponse(ApiErrors.PlayerNotFound));
     }
 
     return Ok(new PlayerDto(player));
@@ -131,7 +131,7 @@ public class PlayerController(PlayerContext context) : ControllerBase
 
     if (player == null)
     {
-      return NotFound(new { Error = ApiErrors.PlayerNotFound });
+      return NotFound(new ErrorResponse(ApiErrors.PlayerNotFound));
     }
 
     player.PublicName = publicName ?? player.PublicName;
@@ -153,7 +153,7 @@ public class PlayerController(PlayerContext context) : ControllerBase
 
     if (player == null)
     {
-      return NotFound(new { Error = ApiErrors.PlayerNotFound });
+      return NotFound(new ErrorResponse(ApiErrors.PlayerNotFound));
     }
 
     player.DotaId = newDotaId;
@@ -174,7 +174,7 @@ public class PlayerController(PlayerContext context) : ControllerBase
 
     if (player == null)
     {
-      return NotFound(new { Error = ApiErrors.PlayerNotFound });
+      return NotFound(new ErrorResponse(ApiErrors.PlayerNotFound));
     }
 
     _context.Players.Remove(player);
