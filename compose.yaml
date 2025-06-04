@@ -22,7 +22,7 @@ services:
     develop:
       watch:
         - action: rebuild
-          path: .
+          path: ./src
   # deploy:
     #   resources:
     #     limits:
