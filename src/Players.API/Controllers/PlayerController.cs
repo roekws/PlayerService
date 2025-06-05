@@ -5,15 +5,14 @@ using Players.API.Infrastructure.Authorization.Claims;
 using Players.API.Infrastructure.Errors;
 using Players.API.Models;
 using Players.Core.Data;
-using Players.Core.Entities;
 
 namespace Players.API.Controllers;
 
 [ApiController]
 [Route("api/player")]
-public class PlayerController(PlayerContext context) : ControllerBase
+public class PlayerController(IPlayerService playerService) : ControllerBase
 {
-  private readonly PlayerContext _context = context;
+  private readonly IPlayerService playerService = playerService;
 
   [AllowAnonymous]
   [HttpGet("{id}")]
@@ -21,7 +20,7 @@ public class PlayerController(PlayerContext context) : ControllerBase
   [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
   public async Task<ActionResult> GetPlayerById(long id)
   {
-    var player = await _context.Players.FindAsync(id);
+    var player = await playerService.GetByIdAsync(id);
 
     if (player == null)
     {
@@ -37,7 +36,7 @@ public class PlayerController(PlayerContext context) : ControllerBase
   [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
   public async Task<ActionResult> GetPlayerByDotaId(long dotaId)
   {
-    var player = await _context.Players.FirstOrDefaultAsync(player => player.DotaId == dotaId);
+    var player = await playerService.GetByDotaIdAsync(dotaId);
 
     if (player == null)
     {
@@ -53,7 +52,7 @@ public class PlayerController(PlayerContext context) : ControllerBase
   [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
   public async Task<ActionResult<PlayerDto>> GetPlayerBySteamId(long steamId)
   {
-    var player = await _context.Players.FirstOrDefaultAsync(player => player.SteamId == steamId);
+    var player = await playerService.GetBySteamIdAsync(steamId);
 
     if (player == null)
     {
@@ -73,26 +72,17 @@ public class PlayerController(PlayerContext context) : ControllerBase
     var dotaId = long.Parse(User.FindFirst(PlayersClaimTypes.DotaId)!.Value);
     var steamId = long.Parse(User.FindFirst(PlayersClaimTypes.SteamId)!.Value);
 
-    var player = await _context.Players
-      .AsNoTracking()
-      .AnyAsync(
-        player => player.DotaId == dotaId ||
-        player.SteamId == steamId
-      );
+    var player = await playerService.RegisterAsync(dotaId, steamId);
 
-    if (player)
+    if (player == null)
     {
       return BadRequest(new ErrorResponse(ApiErrors.PlayerExists));
     }
 
-    var AddPlayer = new Player() { DotaId = dotaId, SteamId = steamId };
-    _context.Players.Add(AddPlayer);
-    await _context.SaveChangesAsync();
-
     return CreatedAtAction(
       actionName: nameof(GetPlayerById),
-      routeValues: new { id = AddPlayer.Id },
-      value: new PlayerDto(AddPlayer)
+      routeValues: new { id = player.Id },
+      value: new PlayerDto(player)
     );
   }
 
@@ -101,12 +91,12 @@ public class PlayerController(PlayerContext context) : ControllerBase
   [ProducesResponseType<PlayerDto>(StatusCodes.Status200OK)]
   [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-  public async Task<ActionResult<PlayerDto>> GetPlayerSelf()
+  public async Task<ActionResult<PlayerDto>> GetAuthenticatedPlayer()
   {
     var dotaId = long.Parse(User.FindFirst(PlayersClaimTypes.DotaId)!.Value);
     var steamId = long.Parse(User.FindFirst(PlayersClaimTypes.SteamId)!.Value);
 
-    var player = await _context.Players.FirstOrDefaultAsync(player => player.SteamId == steamId);
+    var player = await playerService.GetByDotaSteamIdsAsync(dotaId, steamId);
 
     if (player == null)
     {
@@ -122,22 +112,16 @@ public class PlayerController(PlayerContext context) : ControllerBase
   [ProducesResponseType<PlayerDto>(StatusCodes.Status200OK)]
   [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-  public async Task<ActionResult<PlayerDto>> EditPlayerPublicData(bool? isPublicForLadder, string? publicName)
+  public async Task<ActionResult<PlayerDto>> UpdatePlayerPublicData(bool? isPublicForLadder, string? publicName)
   {
-    var dotaId = long.Parse(User.FindFirst(PlayersClaimTypes.DotaId)!.Value);
     var steamId = long.Parse(User.FindFirst(PlayersClaimTypes.SteamId)!.Value);
 
-    var player = await _context.Players.FirstOrDefaultAsync(player => player.SteamId == steamId);
+    var player = await playerService.UpdatePublicDataAsync(isPublicForLadder, publicName, steamId: steamId);
 
     if (player == null)
     {
       return NotFound(new ErrorResponse(ApiErrors.PlayerNotFound));
     }
-
-    player.PublicName = publicName ?? player.PublicName;
-    player.IsPublicForLadder = isPublicForLadder ?? player.IsPublicForLadder;
-
-    await _context.SaveChangesAsync();
 
     return Ok(new PlayerDto(player));
   }
@@ -149,16 +133,12 @@ public class PlayerController(PlayerContext context) : ControllerBase
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   public async Task<ActionResult<PlayerDto>> ChangePlayerId(long id, long newDotaId, long newSteamId)
   {
-    var player = await _context.Players.FirstOrDefaultAsync(player => player.Id == id);
+    var player = await playerService.ChangeDotaSteamIds(id, newDotaId, newSteamId);
 
     if (player == null)
     {
       return NotFound(new ErrorResponse(ApiErrors.PlayerNotFound));
     }
-
-    player.DotaId = newDotaId;
-    player.SteamId = newSteamId;
-    await _context.SaveChangesAsync();
 
     return Ok(new PlayerDto(player));
   }
@@ -170,15 +150,12 @@ public class PlayerController(PlayerContext context) : ControllerBase
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   public async Task<ActionResult<PlayerDto>> RemovePlayer(long id)
   {
-    var player = await _context.Players.FirstOrDefaultAsync(player => player.Id == id);
+    var deleteResult = await playerService.DeleteByIdAsync(id);
 
-    if (player == null)
+    if (deleteResult == null)
     {
       return NotFound(new ErrorResponse(ApiErrors.PlayerNotFound));
     }
-
-    _context.Players.Remove(player);
-    await _context.SaveChangesAsync();
 
     return NoContent();
   }
