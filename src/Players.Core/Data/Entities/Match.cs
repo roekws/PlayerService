@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using Players.Core.Enums;
+﻿using Players.Core.Enums;
 
 namespace Players.Core.Entities;
 
@@ -19,7 +18,6 @@ public class Match
 
   public int GameClientVersion { get; set; }
 
-  [JsonConverter(typeof(JsonStringEnumConverter))]
   public MatchState State { get; set; }
 
   // Navigation properties

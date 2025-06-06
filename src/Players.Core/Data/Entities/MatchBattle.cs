@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using Players.Core.Enums;
+﻿using Players.Core.Enums;
 
 namespace Players.Core.Entities;
 
@@ -26,12 +25,9 @@ public class MatchBattle
   public string? PlayerCharacterSnapshotJson { get; set; }
   public string? PlayerCitySnapshotJson { get; set; }
 
-  [JsonConverter(typeof(JsonStringEnumConverter))]
   public BattleState State { get; set; }
 
   // Navigation properties
-  [JsonIgnore]
   public Match Match { get; set; } = null!;
-  [JsonIgnore]
   public Player? EnemyPlayer { get; set; }
 }

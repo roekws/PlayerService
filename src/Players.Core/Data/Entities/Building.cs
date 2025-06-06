@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace Players.Core.Entities;
 
 public class Building
@@ -20,7 +18,6 @@ public class Building
   public int Rotation { get; set; }
 
   // Navigation properties
-  [JsonIgnore]
   public City City { get; set; } = null!;
   public ICollection<BuildingAbility> Abilities { get; set; } = [];
 }

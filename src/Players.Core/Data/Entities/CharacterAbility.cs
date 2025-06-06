@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace Players.Core.Entities;
 
 public class CharacterAbility
@@ -13,6 +11,5 @@ public class CharacterAbility
   public long Level { get; set; } = 1;
 
   // Navigation properties
-  [JsonIgnore]
   public Character Character { get; set; } = null!;
 }
