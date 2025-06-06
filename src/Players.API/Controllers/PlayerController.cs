@@ -62,7 +62,7 @@ public class PlayerController(IPlayerService playerService) : ControllerBase
     return Ok(new PlayerDto(player));
   }
 
-  [Authorize(Policy = "AdminOnly")]
+  [Authorize(Policy = Policies.AdminOnly)]
   [HttpGet("all")]
   [ProducesResponseType<PaginatedList<PlayerDto>>(StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -77,7 +77,7 @@ public class PlayerController(IPlayerService playerService) : ControllerBase
     return Ok(players);
   }
 
-  [Authorize(Policy = "GameOnly")]
+  [Authorize(Policy = Policies.GameOnly)]
   [HttpPost("register")]
   [ProducesResponseType<PlayerDto>(StatusCodes.Status201Created)]
   [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
@@ -101,7 +101,7 @@ public class PlayerController(IPlayerService playerService) : ControllerBase
     );
   }
 
-  [Authorize(Policy = "GameOnly")]
+  [Authorize(Policy = Policies.GameOnly)]
   [HttpGet]
   [ProducesResponseType<PlayerDto>(StatusCodes.Status200OK)]
   [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
@@ -122,7 +122,7 @@ public class PlayerController(IPlayerService playerService) : ControllerBase
   }
 
   // TO DO: Name rules
-  [Authorize(Policy = "GameOnly")]
+  [Authorize(Policy = Policies.GameOnly)]
   [HttpPatch("edit")]
   [ProducesResponseType<PlayerDto>(StatusCodes.Status200OK)]
   [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
@@ -141,7 +141,7 @@ public class PlayerController(IPlayerService playerService) : ControllerBase
     return Ok(new PlayerDto(player));
   }
 
-  [Authorize(Policy = "AdminOnly")]
+  [Authorize(Policy = Policies.AdminOnly)]
   [HttpPatch("idchange")]
   [ProducesResponseType<PlayerDto>(StatusCodes.Status200OK)]
   [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
@@ -158,7 +158,7 @@ public class PlayerController(IPlayerService playerService) : ControllerBase
     return Ok(new PlayerDto(player));
   }
 
-  [Authorize(Policy = "AdminOnly")]
+  [Authorize(Policy = Policies.AdminOnly)]
   [HttpDelete("{id}")]
   [ProducesResponseType(StatusCodes.Status204NoContent)]
   [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]

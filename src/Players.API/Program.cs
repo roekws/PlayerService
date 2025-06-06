@@ -40,10 +40,10 @@ builder.Services
 
 builder.Services.AddAuthorization(options =>
 {
-  options.AddPolicy("GameOnly", policy =>
+  options.AddPolicy(Policies.GameOnly, policy =>
     policy.RequireClaim(PlayersClaimTypes.ClientType, PlayersClientTypes.Game));
 
-  options.AddPolicy("AdminOnly", policy =>
+  options.AddPolicy(Policies.AdminOnly, policy =>
     policy.RequireClaim(PlayersClaimTypes.ClientType, PlayersClientTypes.Admin));
 });
 
