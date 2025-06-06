@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Players.Core.Data.Pagination;
 using Players.Core.Entities;
+using Players.Core.Services;
 
 namespace Players.Core.Data;
 
@@ -27,6 +29,14 @@ public class PlayerService(PlayerContext context) : IPlayerService
      player.DotaId == dotaId &&
      player.SteamId == steamId
     );
+  }
+
+  public async Task<PaginatedList<Player>> GetAllPaginatedList(
+    int pageIndex = 1,
+    int pageSize = 10
+  )
+  {
+    return await PaginatedList<Player>.CreateAsync(_context.Players, pageIndex, pageSize);
   }
 
   public async Task<Player?> RegisterAsync(long dotaId, long steamId)

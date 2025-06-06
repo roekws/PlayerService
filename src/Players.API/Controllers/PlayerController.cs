@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Players.API.Infrastructure.Authorization.Claims;
 using Players.API.Infrastructure.Errors;
 using Players.API.Models;
-using Players.Core.Data;
+using Players.Core.Data.Pagination;
+using Players.Core.Services;
 
 namespace Players.API.Controllers;
 
@@ -60,6 +60,21 @@ public class PlayerController(IPlayerService playerService) : ControllerBase
     }
 
     return Ok(new PlayerDto(player));
+  }
+
+  [Authorize(Policy = "AdminOnly")]
+  [HttpGet("all")]
+  [ProducesResponseType<PaginatedList<PlayerDto>>(StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+  public async Task<ActionResult<PlayerDto>> GetAllPlayersPaginated(
+    [FromQuery] int page = 1,
+    [FromQuery] int size = 20
+  )
+  {
+    var players = await playerService.GetAllPaginatedList(page, size);
+    players.Items.ConvertAll(player => new PlayerDto(player));
+
+    return Ok(players);
   }
 
   [Authorize(Policy = "GameOnly")]

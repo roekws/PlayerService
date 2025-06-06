@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using Players.API.Infrastructure.Authentication;
 using Players.API.Infrastructure.Authorization.Claims;
 using Players.Core.Data;
+using Players.Core.Services;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -1,6 +1,7 @@
+using Players.Core.Data.Pagination;
 using Players.Core.Entities;
 
-namespace Players.Core.Data;
+namespace Players.Core.Services;
 
 public interface IPlayerService
 {
@@ -8,6 +9,7 @@ public interface IPlayerService
   Task<Player?> GetByDotaIdAsync(long dotaId);
   Task<Player?> GetBySteamIdAsync(long steamId);
   Task<Player?> GetByDotaSteamIdsAsync(long dotaId, long steamId);
+  Task<PaginatedList<Player>> GetAllPaginatedList(int pageIndex = 1, int pageSize = 10);
   Task<Player?> RegisterAsync(long dotaId, long steamId);
   Task<Player?> UpdatePublicDataAsync(
     bool? isPublicForLadder,
