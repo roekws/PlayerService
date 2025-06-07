@@ -1,0 +1,67 @@
+using Microsoft.EntityFrameworkCore;
+using Players.Core.Data;
+using Players.Core.Data.Pagination;
+using Players.Core.Entities;
+
+namespace Players.Core.Services;
+
+public class MatchService(PlayerContext context) : IMatchService
+{
+  private readonly PlayerContext _context = context;
+
+  public async Task<Match?> GetByIdAsync(long id, bool detailed)
+  {
+    var query = _context.Matches.Where(m => m.Id == id);
+
+    if (detailed)
+    {
+      query = IncludeDetails(query);
+    }
+
+    return await query.FirstOrDefaultAsync();
+  }
+
+  public async Task<IEnumerable<Match>> GetActiveByPlayerId(long playerId, bool detailed)
+  {
+    var query = _context.Matches.Where(m => m.PlayerId == playerId);
+
+    if (detailed)
+    {
+      query = IncludeDetails(query);
+    }
+
+    return await query.ToListAsync();
+  }
+
+  public async Task<PaginatedList<Match>> GetPaginatedByPlayerId(
+    long playerId,
+    bool detailed,
+    int pageIndex = 1,
+    int pageSize = 10
+  )
+  {
+    var query = _context.Matches.Where(m => m.PlayerId == playerId);
+
+    if (detailed)
+    {
+      query = IncludeDetails(query);
+    }
+
+    return await PaginatedList<Match>.CreateAsync(query, pageIndex, pageSize);
+  }
+
+  private static IQueryable<Match> IncludeDetails(IQueryable<Match> query)
+  {
+    return query
+      .Include(m => m.Player)
+      .Include(m => m.Character)
+        .ThenInclude(c => c.Items)
+      .Include(m => m.Character)
+        .ThenInclude(c => c.Abilities)
+      .Include(m => m.City)
+        .ThenInclude(c => c.Buildings)
+        .ThenInclude(b => b.Abilities)
+      .Include(m => m.Battles)
+      .AsSplitQuery();
+  }
+}

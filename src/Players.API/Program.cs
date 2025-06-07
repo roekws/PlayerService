@@ -120,6 +120,7 @@ var connection = Environment.GetEnvironmentVariable("DB_CONNECTION");
 builder.Services.AddDbContext<PlayerContext>(options => options.UseNpgsql(connection));
 
 builder.Services.AddScoped<IPlayerService, PlayerService>();
+builder.Services.AddScoped<IMatchService, MatchService>();
 
 var app = builder.Build();
 
