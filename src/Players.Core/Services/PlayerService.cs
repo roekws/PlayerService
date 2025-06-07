@@ -26,8 +26,8 @@ public class PlayerService(PlayerContext context) : IPlayerService
   public async Task<Player?> GetByDotaSteamIdsAsync(long dotaId, long steamId)
   {
     return await _context.Players.FirstOrDefaultAsync(player =>
-     player.DotaId == dotaId &&
-     player.SteamId == steamId
+      player.DotaId == dotaId &&
+      player.SteamId == steamId
     );
   }
 
