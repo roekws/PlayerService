@@ -20,6 +20,7 @@
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
+        <li><a href="#testing">Testing</a></li>
         <li><a href="#sources">Sources</a></li>
       </ul>
     </li>
@@ -77,6 +78,7 @@ Setting up project locally.
   SERVER_KEY=serverkey
   ADMIN_KEY=adminkey
   ASPNETCORE_ENVIRONMENT=Development
+  K6_WEB_DASHBOARD=true
   ```
 
 2. Build and start:
@@ -86,12 +88,12 @@ Setting up project locally.
 
 3. Access the Interactive API Doc at:
   ```sh
-  http://localhost:8080/scalar/
+  http://127.0.0.1:8080/scalar/
   ```
 
   OpenApi Doc:
   ```sh
-  http://localhost:8080/openapi/v1.json
+  http://127.0.0.1:8080/openapi/v1.json
   ```
 
 4. Stop with:
@@ -106,11 +108,36 @@ Setting up project locally.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+### Testing
+
+Load Testing:
+
+1. Pull docker image k6 with:
+    ```sh
+    docker pull grafana/k6
+    ```
+
+2. Run tests:
+    ```sh
+    docker run --rm --env-file .env -i -p 5665:5665 -v ${PWD}:/scripts grafana/k6 run /scripts/tests/Load/PlayerTest.js
+    ```
+
+3. Results:
+
+    - Console output: Printed after test completion
+    - UI Dashboard: Access at
+    ```
+    http://127.0.0.1:5665/
+    ```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ### Sources
 
 - [API Key Authentication](https://habr.com/ru/articles/877302/)
 - [Claims-based authorization in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/claims?view=aspnetcore-9.0)
 - [.NET Docker](https://docs.docker.com/guides/dotnet/)
+- [Grafana k6 load testing tool](https://grafana.com/docs/k6/latest/)
 - []()
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
