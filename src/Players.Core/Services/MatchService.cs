@@ -11,7 +11,9 @@ public class MatchService(PlayerContext context) : IMatchService
 
   public async Task<Match?> GetByIdAsync(long id, bool detailed)
   {
-    var query = _context.Matches.Where(m => m.Id == id);
+    var query = _context.Matches
+    .AsNoTracking()
+    .Where(m => m.Id == id);
 
     if (detailed)
     {
@@ -21,16 +23,18 @@ public class MatchService(PlayerContext context) : IMatchService
     return await query.FirstOrDefaultAsync();
   }
 
-  public async Task<IEnumerable<Match>> GetActiveByPlayerId(long playerId, bool detailed)
+  public async Task<Match?> GetActiveByPlayerId(long playerId, bool detailed)
   {
-    var query = _context.Matches.Where(m => m.PlayerId == playerId);
+    var query = _context.Matches
+      .AsNoTracking()
+      .Where(m => m.PlayerId == playerId);
 
     if (detailed)
     {
       query = IncludeDetails(query);
     }
 
-    return await query.ToListAsync();
+    return await query.FirstOrDefaultAsync();
   }
 
   public async Task<PaginatedList<Match>> GetPaginatedByPlayerId(
@@ -40,7 +44,9 @@ public class MatchService(PlayerContext context) : IMatchService
     int pageSize = 10
   )
   {
-    var query = _context.Matches.Where(m => m.PlayerId == playerId);
+    var query = _context.Matches
+      .AsNoTracking()
+      .Where(m => m.PlayerId == playerId);
 
     if (detailed)
     {
