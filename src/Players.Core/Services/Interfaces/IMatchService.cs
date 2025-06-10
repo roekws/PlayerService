@@ -6,7 +6,7 @@ namespace Players.Core.Services;
 public interface IMatchService
 {
   Task<Match?> GetByIdAsync(long id, bool detailed);
-  Task<IEnumerable<Match>> GetActiveByPlayerId(long playerId, bool detailed);
+  Task<Match?> GetActiveByPlayerId(long playerId, bool detailed);
   Task<PaginatedList<Match>> GetPaginatedByPlayerId(
     long playerId,
     bool detailed,
