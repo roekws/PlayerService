@@ -1,8 +1,8 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
+import { textSummary } from "https://jslib.k6.io/k6-summary/0.0.1/index.js";
 import {
   randomIntBetween,
-  randomItem,
   randomString,
 } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 
@@ -17,9 +17,16 @@ let registeredSteamIds = [];
 export const options = {
   scenarios: {
     player_scenario: {
-      executor: 'per-vu-iterations',
-      vus: 1000,
-      maxDuration: '30s',
+      executor: 'ramping-vus',
+      startVUs: 0,
+      stages: [
+        { duration: '10s', target: 100 },
+        { duration: '10s', target: 175 },
+        { duration: '10s', target: 250 },
+        { duration: '10s', target: 325 },
+        { duration: '10s', target: 400 },
+      ],
+      gracefulRampDown: '0s',
     },
   },
   thresholds: {
@@ -33,7 +40,6 @@ export function setup() {
   for (let i = 0; i < 10; i++) {
     registerNewPlayer();
   }
-  return { dotaIds: registeredDotaIds, steamIds: registeredSteamIds };
 }
 
 export default function () {
@@ -60,6 +66,10 @@ function getAuthenticatedPlayer() {
     },
   });
 
+  if (res.error) {
+    console.error(`[ERROR] ${res.error} | URL: ${res.request.url}`);
+  }
+
   check(res, {
     'authenticated player status is 200': (r) => r.status === 200,
   });
@@ -70,6 +80,10 @@ function getPlayerByDotaId() {
 
   const dotaId = registeredDotaIds[randomIntBetween(0, registeredDotaIds.length - 1)];
   const res = http.get(`${BASE_URL}/api/player/dota=${dotaId}`);
+
+  if (res.error) {
+    console.error(`[ERROR] ${res.error} | URL: ${res.request.url}`);
+  }
 
   check(res, {
     'player by dota_id status is 200 or 404': (r) => r.status === 200 || r.status === 404,
@@ -82,6 +96,10 @@ function getPlayerBySteamId() {
   const steamId = registeredSteamIds[randomIntBetween(0, registeredSteamIds.length - 1)];
   const res = http.get(`${BASE_URL}/api/player/steam=${steamId}`);
 
+  if (res.error) {
+    console.error(`[ERROR] ${res.error} | URL: ${res.request.url}`);
+  }
+
   check(res, {
     'player by steam_id status is 200 or 404': (r) => r.status === 200 || r.status === 404,
   });
@@ -90,6 +108,10 @@ function getPlayerBySteamId() {
 function getPlayerById() {
   const playerId = randomIntBetween(1, 1000);
   const res = http.get(`${BASE_URL}/api/player/${playerId}`);
+
+  if (res.error) {
+    console.error(`[ERROR] ${res.error} | URL: ${res.request.url}`);
+  }
 
   check(res, {
     'player by id status is 200 or 404': (r) => r.status === 200 || r.status === 404,
@@ -118,6 +140,10 @@ function editPlayer() {
     }
   );
 
+  if (res.error) {
+    console.error(`[ERROR] ${res.error} | URL: ${res.request.url}`);
+  }
+
   check(res, {
     'edit player status is 200': (r) => r.status === 200,
   });
@@ -139,8 +165,18 @@ function registerNewPlayer() {
     },
   });
 
+  if (res.error) {
+    console.error(`[ERROR] ${res.error} | URL: ${res.request.url}`);
+  }
+
   if (res.status === 201) {
     registeredDotaIds.push(dotaId);
     registeredSteamIds.push(steamId);
   }
+}
+
+export function handleSummary(data) {
+  return {
+    stdout: textSummary(data, { indent: " ", enableColors: true })
+  };
 }

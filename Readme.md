@@ -119,7 +119,7 @@ Load Testing:
 
 2. Run tests:
     ```sh
-    docker run --rm --env-file .env -i -p 5665:5665 -v ${PWD}:/scripts grafana/k6 run /scripts/tests/Load/PlayerTest.js
+    docker run --rm --env-file .env -p 5665:5665 -i -v ${PWD}/tests/Load:/scripts grafana/k6 run /scripts/PlayerTest.js
     ```
 
 3. Results:
