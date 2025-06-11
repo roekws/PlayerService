@@ -23,6 +23,7 @@ public class MatchDto
   public PlayerDto? Player { get; set; }
   public CharacterDto? Character { get; set; }
   public CityDto? City { get; set; }
+
   public List<MatchBattleDto> Battles { get; set; } = [];
 
   public MatchDto() { }
@@ -42,5 +43,6 @@ public class MatchDto
 
     Player = match.Player != null ? new PlayerDto(match.Player) : null;
     Character = match.Character != null ? new CharacterDto(match.Character) : null;
+    Battles = match.Battles?.Select(a => new MatchBattleDto(a)).ToList() ?? [];
   }
 }
