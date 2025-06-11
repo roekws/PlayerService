@@ -49,14 +49,14 @@ public class MatchController(IMatchService matchService, IPlayerService playerSe
       return NotFound(new ErrorResponse(ApiErrors.PlayerNotFound));
     }
 
-    var activeMatch = await matchService.GetActiveByPlayerId(player.Id, detailed: false);
+    var activeMatch = await matchService.GetActiveByPlayerIdAsync(player.Id, detailed: false);
 
     if (activeMatch != null)
     {
       return NotFound(new ErrorResponse(ApiErrors.ActiveMatchExists));
     }
 
-    var addMatch = await matchService.CreateMatch(player.Id, gameClientVersion);
+    var addMatch = await matchService.CreateMatchAsync(player.Id, gameClientVersion);
 
     if (addMatch == null)
     {

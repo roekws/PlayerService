@@ -23,7 +23,7 @@ public class MatchService(PlayerContext context) : IMatchService
     return await query.FirstOrDefaultAsync();
   }
 
-  public async Task<Match?> GetActiveByPlayerId(long playerId, bool detailed)
+  public async Task<Match?> GetActiveByPlayerIdAsync(long playerId, bool detailed)
   {
     var query = _context.Matches
       .AsNoTracking()
@@ -37,7 +37,7 @@ public class MatchService(PlayerContext context) : IMatchService
     return await query.FirstOrDefaultAsync();
   }
 
-  public async Task<PaginatedList<Match>> GetPaginatedByPlayerId(
+  public async Task<PaginatedList<Match>> GetPaginatedByPlayerIdAsync(
     long playerId,
     bool detailed,
     int pageIndex = 1,
@@ -56,7 +56,7 @@ public class MatchService(PlayerContext context) : IMatchService
     return await PaginatedList<Match>.CreateAsync(query, pageIndex, pageSize);
   }
 
-  public async Task<Match?> CreateMatch(long playerId, long gameClientVersion)
+  public async Task<Match?> CreateMatchAsync(long playerId, long gameClientVersion)
   {
     var player = await _context.Players.FindAsync(playerId);
 
@@ -80,6 +80,7 @@ public class MatchService(PlayerContext context) : IMatchService
   private static IQueryable<Match> IncludeDetails(IQueryable<Match> query)
   {
     return query
+      .Include(m => m.Player)
       .Include(m => m.Character)
         .ThenInclude(c => c.Items)
       .Include(m => m.Character)
