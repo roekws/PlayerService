@@ -13,4 +13,5 @@ public interface IMatchService
     int pageIndex = 1,
     int pageSize = 10
   );
+  Task<Match?> CreateMatch(long playerId, long gameClientVersion);
 }

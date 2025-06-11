@@ -56,10 +56,30 @@ public class MatchService(PlayerContext context) : IMatchService
     return await PaginatedList<Match>.CreateAsync(query, pageIndex, pageSize);
   }
 
+  public async Task<Match?> CreateMatch(long playerId, long gameClientVersion)
+  {
+    var player = await _context.Players.FindAsync(playerId);
+
+    if (player == null)
+    {
+      return null;
+    }
+
+    var match = new Match()
+    {
+      PlayerId = playerId,
+      GameClientVersion = gameClientVersion
+    };
+
+    _context.Matches.Add(match);
+    await _context.SaveChangesAsync();
+
+    return match;
+  }
+
   private static IQueryable<Match> IncludeDetails(IQueryable<Match> query)
   {
     return query
-      .Include(m => m.Player)
       .Include(m => m.Character)
         .ThenInclude(c => c.Items)
       .Include(m => m.Character)
@@ -67,7 +87,6 @@ public class MatchService(PlayerContext context) : IMatchService
       .Include(m => m.City)
         .ThenInclude(c => c.Buildings)
         .ThenInclude(b => b.Abilities)
-      .Include(m => m.Battles)
       .AsSplitQuery();
   }
 }
