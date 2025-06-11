@@ -10,6 +10,7 @@ public static class ApiErrors
   // match
   public const string MatchNotFound = "#match_not_found";
   public const string ActiveMatchExists = "#active_match_exists";
+  public const string MatchCreationError = "#cant_create_new_match";
 
   // Character
   public const string CharacterNotFound = "#character_not_found";
