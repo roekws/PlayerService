@@ -29,6 +29,7 @@ public class PlayerService(PlayerContext context) : IPlayerService
       .AsNoTracking()
       .FirstOrDefaultAsync(player => player.SteamId == steamId);
   }
+
   public async Task<Player?> GetByDotaSteamIdsAsync(long dotaId, long steamId)
   {
     return await _context.Players
@@ -65,7 +66,11 @@ public class PlayerService(PlayerContext context) : IPlayerService
       return null;
     }
 
-    var AddPlayer = new Player() { DotaId = dotaId, SteamId = steamId };
+    var AddPlayer = new Player()
+    {
+      DotaId = dotaId,
+      SteamId = steamId
+    };
 
     _context.Players.Add(AddPlayer);
     await _context.SaveChangesAsync();
