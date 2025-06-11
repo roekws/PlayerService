@@ -12,7 +12,7 @@ using Players.Core.Data;
 namespace Players.Core.Migrations
 {
     [DbContext(typeof(PlayerContext))]
-    [Migration("20250604110136_NewMigration")]
+    [Migration("20250611162723_NewMigration")]
     partial class NewMigration
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace Players.Core.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.4")
+                .HasAnnotation("ProductVersion", "9.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -195,17 +195,17 @@ namespace Players.Core.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("CharacterId")
+                    b.Property<long?>("CharacterId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("CityId")
+                    b.Property<long?>("CityId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("GameClientVersion")
-                        .HasColumnType("integer");
+                    b.Property<long>("GameClientVersion")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("Level")
                         .HasColumnType("integer");
@@ -390,15 +390,11 @@ namespace Players.Core.Migrations
                 {
                     b.HasOne("Players.Core.Entities.Character", "Character")
                         .WithOne("Match")
-                        .HasForeignKey("Players.Core.Entities.Match", "CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Players.Core.Entities.Match", "CharacterId");
 
                     b.HasOne("Players.Core.Entities.City", "City")
                         .WithOne("Match")
-                        .HasForeignKey("Players.Core.Entities.Match", "CityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Players.Core.Entities.Match", "CityId");
 
                     b.HasOne("Players.Core.Entities.Player", "Player")
                         .WithMany("Matches")

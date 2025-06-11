@@ -55,12 +55,12 @@ public class PlayerContext : DbContext
       entity.HasOne(e => e.City)
         .WithOne(e => e.Match)
         .HasForeignKey<Match>(e => e.CityId)
-        .IsRequired();
+        .IsRequired(false);
 
       entity.HasOne(e => e.Character)
         .WithOne(e => e.Match)
         .HasForeignKey<Match>(e => e.CharacterId)
-        .IsRequired();
+        .IsRequired(false);
 
       entity.HasMany(e => e.Battles)
         .WithOne(e => e.Match)

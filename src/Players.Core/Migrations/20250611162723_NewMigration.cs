@@ -138,13 +138,13 @@ namespace Players.Core.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     PlayerId = table.Column<long>(type: "bigint", nullable: false),
-                    CharacterId = table.Column<long>(type: "bigint", nullable: false),
-                    CityId = table.Column<long>(type: "bigint", nullable: false),
+                    CharacterId = table.Column<long>(type: "bigint", nullable: true),
+                    CityId = table.Column<long>(type: "bigint", nullable: true),
                     StartTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Level = table.Column<int>(type: "integer", nullable: false),
                     RatingChange = table.Column<int>(type: "integer", nullable: false),
-                    GameClientVersion = table.Column<int>(type: "integer", nullable: false),
+                    GameClientVersion = table.Column<long>(type: "bigint", nullable: false),
                     State = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -154,14 +154,12 @@ namespace Players.Core.Migrations
                         name: "FK_Matches_Characters_CharacterId",
                         column: x => x.CharacterId,
                         principalTable: "Characters",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Matches_Cities_CityId",
                         column: x => x.CityId,
                         principalTable: "Cities",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Matches_Players_PlayerId",
                         column: x => x.PlayerId,
