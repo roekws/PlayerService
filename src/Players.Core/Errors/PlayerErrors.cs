@@ -21,5 +21,8 @@ public static class PlayerErrors
     new(ErrorType.Failure, "#player_delete_failed", "Failed to delete player profile");
 
   public static Error NoIdentifierProvided =>
-    new(ErrorType.Validation, "#no_player_identifier", "Must provide player ID, Steam ID, or Dota ID to update data");
+    new(ErrorType.Validation, "#player_no_identifier", "Must provide player ID, Steam ID, or Dota ID to update data");
+
+  public static Error NoChangesProvided =>
+    new(ErrorType.Validation, "#player_no_changes", "No changes provided for update");
 }
