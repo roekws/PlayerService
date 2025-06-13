@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Players.API.Infrastructure.Authorization.Claims;
-using Players.API.Models;
+using Players.API.Models.Responses;
 using Players.Core.Data.Results;
 using Players.Core.Services;
 
@@ -123,7 +123,10 @@ public class PlayerController(IPlayerService playerService) : BaseController
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-  public async Task<IActionResult> UpdatePlayerPublicData(bool? isPublicForLadder, string? publicName)
+  public async Task<IActionResult> UpdatePlayerPublicData(
+    [FromBody] bool? isPublicForLadder,
+    [FromBody] string? publicName
+  )
   {
     var steamId = long.Parse(User.FindFirst(PlayersClaimTypes.SteamId)!.Value);
 
@@ -141,7 +144,11 @@ public class PlayerController(IPlayerService playerService) : BaseController
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-  public async Task<IActionResult> ChangePlayerId(long id, long newDotaId, long newSteamId)
+  public async Task<IActionResult> ChangePlayerId(
+    [FromBody] long id,
+    [FromBody] long newDotaId,
+    [FromBody] long newSteamId
+  )
   {
     var result = await playerService.ChangeDotaSteamIds(id, newDotaId, newSteamId);
 

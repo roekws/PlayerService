@@ -1,6 +1,6 @@
 using Players.Core.Entities;
 
-namespace Players.API.Models;
+namespace Players.API.Models.Responses;
 
 public class CharacterItemDto
 {
