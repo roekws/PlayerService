@@ -9,35 +9,51 @@ public class PlayerService(PlayerContext context) : IPlayerService
 {
   private readonly PlayerContext _context = context;
 
-  public async Task<Player?> GetByIdAsync(long id)
+  public async Task<Result<Player>> GetByIdAsync(long id)
   {
-    return await _context.Players
+    var player = await _context.Players
       .AsNoTracking()
       .FirstOrDefaultAsync(player => player.Id == id);
+
+    return player == null ?
+      new Result<Player> { Error = PlayerErrors.NotFound } :
+      new Result<Player> { Value = player };
   }
 
-  public async Task<Player?> GetByDotaIdAsync(long dotaId)
+  public async Task<Result<Player>> GetByDotaIdAsync(long dotaId)
   {
-    return await _context.Players
+    var player = await _context.Players
       .AsNoTracking()
       .FirstOrDefaultAsync(player => player.DotaId == dotaId);
+
+    return player == null ?
+      new Result<Player> { Error = PlayerErrors.NotFound } :
+      new Result<Player> { Value = player };
   }
 
-  public async Task<Player?> GetBySteamIdAsync(long steamId)
+  public async Task<Result<Player>> GetBySteamIdAsync(long steamId)
   {
-    return await _context.Players
+    var player = await _context.Players
       .AsNoTracking()
       .FirstOrDefaultAsync(player => player.SteamId == steamId);
+
+    return player == null ?
+      new Result<Player> { Error = PlayerErrors.NotFound } :
+      new Result<Player> { Value = player };
   }
 
-  public async Task<Player?> GetByDotaSteamIdsAsync(long dotaId, long steamId)
+  public async Task<Result<Player>> GetByDotaSteamIdsAsync(long dotaId, long steamId)
   {
-    return await _context.Players
+    var player = await _context.Players
       .AsNoTracking()
       .FirstOrDefaultAsync(player =>
         player.DotaId == dotaId &&
         player.SteamId == steamId
       );
+
+    return player == null ?
+      new Result<Player> { Error = PlayerErrors.NotFound } :
+      new Result<Player> { Value = player };
   }
 
   public async Task<PaginatedList<Player>> GetAllPaginatedList(
@@ -52,7 +68,7 @@ public class PlayerService(PlayerContext context) : IPlayerService
     );
   }
 
-  public async Task<Player?> RegisterAsync(long dotaId, long steamId)
+  public async Task<Result<Player>> RegisterAsync(long dotaId, long steamId)
   {
     var player = await _context.Players
       .AsNoTracking()
@@ -63,7 +79,7 @@ public class PlayerService(PlayerContext context) : IPlayerService
 
     if (player)
     {
-      return null;
+      return new Result<Player> { Error = PlayerErrors.NotFound };
     }
 
     var AddPlayer = new Player()
@@ -73,12 +89,14 @@ public class PlayerService(PlayerContext context) : IPlayerService
     };
 
     _context.Players.Add(AddPlayer);
-    await _context.SaveChangesAsync();
+    var saveResult = await _context.SaveChangesAsync();
 
-    return AddPlayer;
+    return saveResult > 0 ?
+      new Result<Player> { Error = PlayerErrors.CreateFailed } :
+      new Result<Player> { Value = AddPlayer };
   }
 
-  public async Task<Player?> UpdatePublicDataAsync(bool? isPublicForLadder,
+  public async Task<Result<Player>> UpdatePublicDataAsync(bool? isPublicForLadder,
     string? publicName,
     long? id = null,
     long? steamId = null,
@@ -101,51 +119,60 @@ public class PlayerService(PlayerContext context) : IPlayerService
     }
     else
     {
-      return null;
+      return new Result<Player> { Error = PlayerErrors.NoIdentifierProvided };
     }
 
     var player = await query.FirstOrDefaultAsync();
 
     if (player == null)
     {
-      return null;
+      return new Result<Player> { Error = PlayerErrors.NotFound };
     }
 
     player.PublicName = publicName ?? player.PublicName;
     player.IsPublicForLadder = isPublicForLadder ?? player.IsPublicForLadder;
 
-    await _context.SaveChangesAsync();
-    return player;
+    var saveResult = await _context.SaveChangesAsync();
+
+    return saveResult > 0 ?
+      new Result<Player> { Error = PlayerErrors.CreateFailed } :
+      new Result<Player> { Value = player };
   }
 
-  public async Task<Player?> ChangeDotaSteamIds(long id, long newDotaId, long newSteamId)
+  public async Task<Result<Player>> ChangeDotaSteamIds(long id, long newDotaId, long newSteamId)
   {
     var player = await _context.Players.FindAsync(id);
 
     if (player == null)
     {
-      return null;
+      return new Result<Player> { Error = PlayerErrors.NotFound };
     }
 
     player.DotaId = newDotaId;
     player.SteamId = newSteamId;
-    await _context.SaveChangesAsync();
 
-    return player;
+    var saveResult = await _context.SaveChangesAsync();
+
+    return saveResult > 0 ?
+      new Result<Player> { Error = PlayerErrors.CreateFailed } :
+      new Result<Player> { Value = player };
   }
 
-  public async Task<bool?> DeleteByIdAsync(long id)
+  public async Task<Result<Player>> DeleteByIdAsync(long id)
   {
     var player = await _context.Players.FindAsync(id);
 
     if (player == null)
     {
-      return null;
+      return new Result<Player> { Error = PlayerErrors.NotFound };
     }
 
     _context.Players.Remove(player);
-    await _context.SaveChangesAsync();
 
-    return true;
+    var saveResult = await _context.SaveChangesAsync();
+
+    return saveResult > 0 ?
+      new Result<Player> { Error = PlayerErrors.CreateFailed } :
+      new Result<Player> { Value = player };
   }
 }

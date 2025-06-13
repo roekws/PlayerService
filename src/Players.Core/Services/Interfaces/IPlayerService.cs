@@ -5,13 +5,13 @@ namespace Players.Core.Services;
 
 public interface IPlayerService
 {
-  Task<Player?> GetByIdAsync(long id);
-  Task<Player?> GetByDotaIdAsync(long dotaId);
-  Task<Player?> GetBySteamIdAsync(long steamId);
-  Task<Player?> GetByDotaSteamIdsAsync(long dotaId, long steamId);
+  Task<Result<Player>> GetByIdAsync(long id);
+  Task<Result<Player>> GetByDotaIdAsync(long dotaId);
+  Task<Result<Player>> GetBySteamIdAsync(long steamId);
+  Task<Result<Player>> GetByDotaSteamIdsAsync(long dotaId, long steamId);
   Task<PaginatedList<Player>> GetAllPaginatedList(int pageIndex = 1, int pageSize = 10);
-  Task<Player?> RegisterAsync(long dotaId, long steamId);
-  Task<Player?> UpdatePublicDataAsync(
+  Task<Result<Player>> RegisterAsync(long dotaId, long steamId);
+  Task<Result<Player>> UpdatePublicDataAsync(
     bool? isPublicForLadder,
     string? publicName,
     long? playerId = null,
@@ -19,6 +19,6 @@ public interface IPlayerService
     long? dotaId = null
   );
 
-  Task<Player?> ChangeDotaSteamIds(long id, long newDotaId, long newSteamId);
-  Task<bool?> DeleteByIdAsync(long id);
+  Task<Result<Player>> ChangeDotaSteamIds(long id, long newDotaId, long newSteamId);
+  Task<Result<Player>> DeleteByIdAsync(long id);
 }
