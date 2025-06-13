@@ -17,8 +17,8 @@ public class PlayerService(PlayerContext context) : IPlayerService
       .FirstOrDefaultAsync(player => player.Id == id);
 
     return player == null ?
-      new Result<Player> { Error = PlayerErrors.NotFound } :
-      new Result<Player> { Value = player };
+      Result<Player>.Failure(PlayerErrors.NotFound) :
+      Result<Player>.Success(player);
   }
 
   public async Task<Result<Player>> GetByDotaIdAsync(long dotaId)
@@ -28,8 +28,8 @@ public class PlayerService(PlayerContext context) : IPlayerService
       .FirstOrDefaultAsync(player => player.DotaId == dotaId);
 
     return player == null ?
-      new Result<Player> { Error = PlayerErrors.NotFound } :
-      new Result<Player> { Value = player };
+      Result<Player>.Failure(PlayerErrors.NotFound) :
+      Result<Player>.Success(player);
   }
 
   public async Task<Result<Player>> GetBySteamIdAsync(long steamId)
@@ -39,8 +39,8 @@ public class PlayerService(PlayerContext context) : IPlayerService
       .FirstOrDefaultAsync(player => player.SteamId == steamId);
 
     return player == null ?
-      new Result<Player> { Error = PlayerErrors.NotFound } :
-      new Result<Player> { Value = player };
+      Result<Player>.Failure(PlayerErrors.NotFound) :
+      Result<Player>.Success(player);
   }
 
   public async Task<Result<Player>> GetByDotaSteamIdsAsync(long dotaId, long steamId)
@@ -53,8 +53,8 @@ public class PlayerService(PlayerContext context) : IPlayerService
       );
 
     return player == null ?
-      new Result<Player> { Error = PlayerErrors.NotFound } :
-      new Result<Player> { Value = player };
+      Result<Player>.Failure(PlayerErrors.NotFound) :
+      Result<Player>.Success(player);
   }
 
   public async Task<PaginatedList<Player>> GetAllPaginatedList(
@@ -80,7 +80,7 @@ public class PlayerService(PlayerContext context) : IPlayerService
 
     if (player)
     {
-      return new Result<Player> { Error = PlayerErrors.NotFound };
+      return Result<Player>.Failure(PlayerErrors.NotFound);
     }
 
     var AddPlayer = new Player()
@@ -93,8 +93,8 @@ public class PlayerService(PlayerContext context) : IPlayerService
     var saveResult = await _context.SaveChangesAsync();
 
     return saveResult > 0 ?
-      new Result<Player> { Error = PlayerErrors.CreateFailed } :
-      new Result<Player> { Value = AddPlayer };
+      Result<Player>.Failure(PlayerErrors.CreateFailed) :
+      Result<Player>.Success(AddPlayer);
   }
 
   public async Task<Result<Player>> UpdatePublicDataAsync(bool? isPublicForLadder,
@@ -120,14 +120,14 @@ public class PlayerService(PlayerContext context) : IPlayerService
     }
     else
     {
-      return new Result<Player> { Error = PlayerErrors.NoIdentifierProvided };
+      return Result<Player>.Failure(PlayerErrors.NoIdentifierProvided);
     }
 
     var player = await query.FirstOrDefaultAsync();
 
     if (player == null)
     {
-      return new Result<Player> { Error = PlayerErrors.NotFound };
+      return Result<Player>.Failure(PlayerErrors.NotFound);
     }
 
     player.PublicName = publicName ?? player.PublicName;
@@ -136,8 +136,8 @@ public class PlayerService(PlayerContext context) : IPlayerService
     var saveResult = await _context.SaveChangesAsync();
 
     return saveResult > 0 ?
-      new Result<Player> { Error = PlayerErrors.CreateFailed } :
-      new Result<Player> { Value = player };
+      Result<Player>.Failure(PlayerErrors.UpdateFailed) :
+      Result<Player>.Success(player);
   }
 
   public async Task<Result<Player>> ChangeDotaSteamIds(long id, long newDotaId, long newSteamId)
@@ -146,7 +146,7 @@ public class PlayerService(PlayerContext context) : IPlayerService
 
     if (player == null)
     {
-      return new Result<Player> { Error = PlayerErrors.NotFound };
+      return Result<Player>.Failure(PlayerErrors.NotFound);
     }
 
     player.DotaId = newDotaId;
@@ -155,17 +155,17 @@ public class PlayerService(PlayerContext context) : IPlayerService
     var saveResult = await _context.SaveChangesAsync();
 
     return saveResult > 0 ?
-      new Result<Player> { Error = PlayerErrors.CreateFailed } :
-      new Result<Player> { Value = player };
+      Result<Player>.Failure(PlayerErrors.CreateFailed) :
+      Result<Player>.Success(player);
   }
 
-  public async Task<Result<Player>> DeleteByIdAsync(long id)
+  public async Task<Result> DeleteByIdAsync(long id)
   {
     var player = await _context.Players.FindAsync(id);
 
     if (player == null)
     {
-      return new Result<Player> { Error = PlayerErrors.NotFound };
+      return Result.Failure(PlayerErrors.DeleteFailed);
     }
 
     _context.Players.Remove(player);
@@ -173,7 +173,7 @@ public class PlayerService(PlayerContext context) : IPlayerService
     var saveResult = await _context.SaveChangesAsync();
 
     return saveResult > 0 ?
-      new Result<Player> { Error = PlayerErrors.CreateFailed } :
-      new Result<Player> { Value = player };
+      Result.Failure(PlayerErrors.DeleteFailed) :
+      Result.Success();
   }
 }

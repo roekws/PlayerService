@@ -20,5 +20,5 @@ public interface IPlayerService
   );
 
   Task<Result<Player>> ChangeDotaSteamIds(long id, long newDotaId, long newSteamId);
-  Task<Result<Player>> DeleteByIdAsync(long id);
+  Task<Result> DeleteByIdAsync(long id);
 }
