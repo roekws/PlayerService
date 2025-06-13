@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Players.API.Infrastructure.Authorization.Claims;
 using Players.API.Infrastructure.Errors;
 using Players.API.Models;
-using Players.Core.Data.Pagination;
+using Players.Core.Data.Results;
 using Players.Core.Services;
 
 namespace Players.API.Controllers;

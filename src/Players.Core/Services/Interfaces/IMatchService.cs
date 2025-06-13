@@ -1,5 +1,5 @@
-using Players.Core.Data.Pagination;
 using Players.Core.Entities;
+using Players.Core.Data.Results;
 
 namespace Players.Core.Services;
 

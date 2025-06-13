@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace Players.Core.Data.Pagination;
+namespace Players.Core.Data.Results;
 
 public class PaginatedList<T>
 {

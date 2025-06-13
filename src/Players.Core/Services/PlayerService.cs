@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Players.Core.Data.Pagination;
+using Players.Core.Data.Results;
 using Players.Core.Entities;
 using Players.Core.Services;
 

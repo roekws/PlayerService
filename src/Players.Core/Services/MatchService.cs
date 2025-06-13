@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Players.Core.Data;
-using Players.Core.Data.Pagination;
 using Players.Core.Entities;
+using Players.Core.Data.Results;
 
 namespace Players.Core.Services;
 
@@ -12,8 +12,8 @@ public class MatchService(PlayerContext context) : IMatchService
   public async Task<Match?> GetByIdAsync(long id, bool detailed)
   {
     var query = _context.Matches
-    .AsNoTracking()
-    .Where(m => m.Id == id);
+      .AsNoTracking()
+      .Where(m => m.Id == id);
 
     if (detailed)
     {
