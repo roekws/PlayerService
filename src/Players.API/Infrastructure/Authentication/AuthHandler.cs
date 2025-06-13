@@ -43,37 +43,37 @@ public class AuthHandler : AuthenticationHandler<AuthSchemeOptions>
     }
     else
     {
-      return AuthenticateResult.Fail(ApiErrors.KeyIsInvalid);
+      return AuthenticateResult.Fail("The provided authentication key is invalid");
     }
 
     if (!Request.Headers.TryGetValue(AuthHeaders.DotaId, out var inputDotaId))
     {
-      return AuthenticateResult.Fail(ApiErrors.DotaIsMissing);
+      return AuthenticateResult.Fail("Dota ID header is required but was not provided");
     }
 
     if (!long.TryParse(inputDotaId.ToString(), out var dotaId))
     {
-      return AuthenticateResult.Fail(ApiErrors.DotaIdIsInvalid);
+      return AuthenticateResult.Fail("The provided Dota ID is not a valid number");
     }
 
     if (!Request.Headers.TryGetValue(AuthHeaders.SteamId, out var inputSteamId))
     {
-      return AuthenticateResult.Fail(ApiErrors.SteamIdIsMissing);
+      return AuthenticateResult.Fail(" Steam ID header is required but was not provided");
     }
 
     if (!long.TryParse(inputSteamId.ToString(), out var steamId))
     {
-      return AuthenticateResult.Fail(ApiErrors.SteamIdIsInvalid);
+      return AuthenticateResult.Fail("The provided Steam ID is not a valid number");
     }
 
     if (!Request.Headers.TryGetValue(AuthHeaders.GameClientVersion, out var inputGameClientVersion))
     {
-      return AuthenticateResult.Fail(ApiErrors.GameClientVersionIsMissing);
+      return AuthenticateResult.Fail("Game client version header is required");
     }
 
     if (!long.TryParse(inputGameClientVersion.ToString(), out var gameClientVersion))
     {
-      return AuthenticateResult.Fail(ApiErrors.GameClientVersionIsInvalid);
+      return AuthenticateResult.Fail("Client version must be a valid number");
     }
 
     claims.Add(new Claim(PlayersClaimTypes.DotaId, dotaId.ToString()));
