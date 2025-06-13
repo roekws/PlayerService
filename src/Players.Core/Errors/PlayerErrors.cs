@@ -10,4 +10,16 @@ public static class PlayerErrors
 
   public static Error NotPublic =>
     new("#player_profile_private", "The player's profile is not accessible");
+
+  public static Error CreateFailed =>
+    new("#player_create_failed", "Failed to create new player profile");
+
+  public static Error UpdateFailed =>
+    new("#player_update_failed", "Failed to update player data");
+
+  public static Error DeleteFailed =>
+    new("#player_delete_failed", "Failed to delete player profile");
+
+  public static Error NoIdentifierProvided =>
+    new("#no_player_identifier", "Must provide player ID, Steam ID, or Dota ID to update data");
 }
