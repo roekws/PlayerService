@@ -3,7 +3,6 @@ using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using Players.API.Infrastructure.Authorization.Claims;
-using Players.API.Infrastructure.Errors;
 using Scalar.AspNetCore;
 
 namespace Players.API.Infrastructure.Authentication;
