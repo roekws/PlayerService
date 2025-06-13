@@ -1,4 +1,4 @@
-namespace Players.Core.Data.Results;
+namespace Players.Core.Data.Errors;
 
 public static class CharacterErrors
 {
