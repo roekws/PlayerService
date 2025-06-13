@@ -192,7 +192,7 @@ public class PlayerService(PlayerContext context) : IPlayerService
 
     if (player == null)
     {
-      return Result.Failure(PlayerErrors.DeleteFailed);
+      return Result.Failure(PlayerErrors.NotFound);
     }
 
     _context.Players.Remove(player);
