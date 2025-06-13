@@ -80,7 +80,7 @@ public class PlayerService(PlayerContext context) : IPlayerService
 
     if (player)
     {
-      return Result<Player>.Failure(PlayerErrors.NotFound);
+      return Result<Player>.Failure(PlayerErrors.AlreadyExists);
     }
 
     var AddPlayer = new Player()
@@ -90,11 +90,12 @@ public class PlayerService(PlayerContext context) : IPlayerService
     };
 
     _context.Players.Add(AddPlayer);
-    var saveResult = await _context.SaveChangesAsync();
 
-    return saveResult > 0 ?
-      Result<Player>.Failure(PlayerErrors.CreateFailed) :
-      Result<Player>.Success(AddPlayer);
+    var rowsAffected = await _context.SaveChangesAsync();
+
+    return rowsAffected > 0 ?
+      Result<Player>.Success(AddPlayer) :
+      Result<Player>.Failure(PlayerErrors.CreateFailed);
   }
 
   public async Task<Result<Player>> UpdatePublicDataAsync(bool? isPublicForLadder,
@@ -130,14 +131,28 @@ public class PlayerService(PlayerContext context) : IPlayerService
       return Result<Player>.Failure(PlayerErrors.NotFound);
     }
 
-    player.PublicName = publicName ?? player.PublicName;
-    player.IsPublicForLadder = isPublicForLadder ?? player.IsPublicForLadder;
+    bool madeChanges = false;
 
-    var saveResult = await _context.SaveChangesAsync();
+    if (publicName != null && player.PublicName != publicName)
+    {
+      player.PublicName = publicName;
+      madeChanges = true;
+    }
 
-    return saveResult > 0 ?
-      Result<Player>.Failure(PlayerErrors.UpdateFailed) :
-      Result<Player>.Success(player);
+    if (isPublicForLadder != null && player.IsPublicForLadder != isPublicForLadder)
+    {
+      player.IsPublicForLadder = isPublicForLadder.Value;
+      madeChanges = true;
+    }
+
+    if (!madeChanges)
+      return Result<Player>.Success(player);
+
+    var rowsAffected = await _context.SaveChangesAsync();
+
+    return rowsAffected > 0 ?
+      Result<Player>.Success(player) :
+      Result<Player>.Failure(PlayerErrors.UpdateFailed);
   }
 
   public async Task<Result<Player>> ChangeDotaSteamIds(long id, long newDotaId, long newSteamId)
@@ -152,11 +167,11 @@ public class PlayerService(PlayerContext context) : IPlayerService
     player.DotaId = newDotaId;
     player.SteamId = newSteamId;
 
-    var saveResult = await _context.SaveChangesAsync();
+    var rowsAffected = await _context.SaveChangesAsync();
 
-    return saveResult > 0 ?
-      Result<Player>.Failure(PlayerErrors.CreateFailed) :
-      Result<Player>.Success(player);
+    return rowsAffected > 0 ?
+      Result<Player>.Success(player) :
+      Result<Player>.Failure(PlayerErrors.CreateFailed);
   }
 
   public async Task<Result> DeleteByIdAsync(long id)
@@ -170,10 +185,10 @@ public class PlayerService(PlayerContext context) : IPlayerService
 
     _context.Players.Remove(player);
 
-    var saveResult = await _context.SaveChangesAsync();
+    var rowsAffected = await _context.SaveChangesAsync();
 
-    return saveResult > 0 ?
-      Result.Failure(PlayerErrors.DeleteFailed) :
-      Result.Success();
+    return rowsAffected > 0 ?
+      Result.Success() :
+      Result.Failure(PlayerErrors.DeleteFailed);
   }
 }
