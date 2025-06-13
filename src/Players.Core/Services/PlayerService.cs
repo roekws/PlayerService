@@ -164,6 +164,18 @@ public class PlayerService(PlayerContext context) : IPlayerService
       return Result<Player>.Failure(PlayerErrors.NotFound);
     }
 
+    var idExists = await _context.Players
+      .AsNoTracking()
+      .AnyAsync(
+        player => player.DotaId == newDotaId ||
+        player.SteamId == newSteamId
+      );
+
+    if (idExists)
+    {
+      return Result<Player>.Failure(PlayerErrors.AlreadyExists);
+    }
+
     player.DotaId = newDotaId;
     player.SteamId = newSteamId;
 
