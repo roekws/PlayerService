@@ -98,7 +98,8 @@ public class PlayerService(PlayerContext context) : IPlayerService
       Result<Player>.Failure(PlayerErrors.CreateFailed);
   }
 
-  public async Task<Result<Player>> UpdatePublicDataAsync(bool? isPublicForLadder,
+  public async Task<Result<Player>> UpdatePublicDataAsync(
+    bool? isPublicForLadder,
     string? publicName,
     long? id = null,
     long? steamId = null,
