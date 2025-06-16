@@ -110,15 +110,15 @@ public class PlayerService(PlayerContext context) : IPlayerService
 
     if (id.HasValue)
     {
-      query = query.Where(p => p.Id == id.Value);
+      query = query.Where(player => player.Id == id.Value);
     }
     else if (steamId.HasValue)
     {
-      query = query.Where(p => p.SteamId == steamId.Value);
+      query = query.Where(player => player.SteamId == steamId.Value);
     }
     else if (dotaId.HasValue)
     {
-      query = query.Where(p => p.DotaId == dotaId.Value);
+      query = query.Where(player => player.DotaId == dotaId.Value);
     }
     else
     {
@@ -131,23 +131,6 @@ public class PlayerService(PlayerContext context) : IPlayerService
     {
       return Result<Player>.Failure(PlayerErrors.NotFound);
     }
-
-    bool madeChanges = false;
-
-    if (publicName != null && player.PublicName != publicName)
-    {
-      player.PublicName = publicName;
-      madeChanges = true;
-    }
-
-    if (isPublicForLadder != null && player.IsPublicForLadder != isPublicForLadder)
-    {
-      player.IsPublicForLadder = isPublicForLadder.Value;
-      madeChanges = true;
-    }
-
-    if (!madeChanges)
-      return Result<Player>.Success(player);
 
     var rowsAffected = await _context.SaveChangesAsync();
 

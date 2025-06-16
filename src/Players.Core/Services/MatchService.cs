@@ -15,7 +15,7 @@ public class MatchService(PlayerContext context) : IMatchService
   {
     var query = _context.Matches
       .AsNoTracking()
-      .Where(m => m.Id == id);
+      .Where(match => match.Id == id);
 
     if (detailed)
     {
@@ -45,7 +45,7 @@ public class MatchService(PlayerContext context) : IMatchService
 
     var query = _context.Matches
       .AsNoTracking()
-      .Where(m => m.PlayerId == player.Id);
+      .Where(match => match.PlayerId == player.Id);
 
     if (detailed)
     {
@@ -76,9 +76,9 @@ public class MatchService(PlayerContext context) : IMatchService
 
     var query = _context.Matches
       .AsNoTracking()
-      .Where(m =>
-        m.Player.DotaId == dotaId &&
-        m.Player.SteamId == steamId
+      .Where(match =>
+        match.Player.DotaId == dotaId &&
+        match.Player.SteamId == steamId
         );
 
     if (detailed)
@@ -159,14 +159,14 @@ public class MatchService(PlayerContext context) : IMatchService
   private static IQueryable<Match> IncludeDetails(IQueryable<Match> query)
   {
     return query
-      .Include(m => m.Player)
-      .Include(m => m.Character)
-        .ThenInclude(c => c.Items)
-      .Include(m => m.Character)
-        .ThenInclude(c => c.Abilities)
-      .Include(m => m.City)
-        .ThenInclude(c => c.Buildings)
-        .ThenInclude(b => b.Abilities)
+      .Include(match => match.Player)
+      .Include(match => match.Character)
+        .ThenInclude(character => character.Items)
+      .Include(match => match.Character)
+        .ThenInclude(character => character.Abilities)
+      .Include(match => match.City)
+        .ThenInclude(character => character.Buildings)
+        .ThenInclude(city => city.Abilities)
       .AsSplitQuery();
   }
 }
