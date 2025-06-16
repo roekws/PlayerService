@@ -28,11 +28,23 @@ public class MatchService(PlayerContext context) : IMatchService
       Result<Match>.Success(match);
   }
 
-  public async Task<Result<Match>> GetActiveByPlayerIdAsync(long playerId, bool detailed)
+  public async Task<Result<Match>> GetActiveByPlayerAsync(long dotaId, long steamId, bool detailed)
   {
+    var player = await _context.Players
+      .AsNoTracking()
+      .FirstOrDefaultAsync(player =>
+        player.DotaId == dotaId &&
+        player.SteamId == steamId
+      );
+
+    if (player == null)
+    {
+      return Result<Match>.Failure(PlayerErrors.NotFound);
+    }
+
     var query = _context.Matches
       .AsNoTracking()
-      .Where(m => m.PlayerId == playerId);
+      .Where(m => m.PlayerId == player.Id);
 
     if (detailed)
     {
@@ -47,15 +59,28 @@ public class MatchService(PlayerContext context) : IMatchService
   }
 
   public async Task<PaginatedList<Match>> GetPaginatedByPlayerIdAsync(
-    long playerId,
+    long dotaId,
+    long steamId,
     bool detailed,
     int pageIndex = 1,
     int pageSize = 10
   )
   {
+    var player = await _context.Players
+      .AsNoTracking()
+      .FirstOrDefaultAsync(player =>
+        player.DotaId == dotaId &&
+        player.SteamId == steamId
+      );
+
+    if (player == null)
+    {
+      return Result<Match>.Failure(PlayerErrors.NotFound);
+    }
+
     var query = _context.Matches
       .AsNoTracking()
-      .Where(m => m.PlayerId == playerId);
+      .Where(m => m.PlayerId == player.Id);
 
     if (detailed)
     {
@@ -65,9 +90,14 @@ public class MatchService(PlayerContext context) : IMatchService
     return await PaginatedList<Match>.CreateAsync(query, pageIndex, pageSize);
   }
 
-  public async Task<Result<Match>> CreateMatchAsync(long playerId, long gameClientVersion)
+  public async Task<Result<Match>> CreateMatchAsync(long dotaId, long steamId, long gameClientVersion)
   {
-    var player = await _context.Players.FindAsync(playerId);
+    var player = await _context.Players
+      .AsNoTracking()
+      .FirstOrDefaultAsync(player =>
+        player.DotaId == dotaId &&
+        player.SteamId == steamId
+      );
 
     if (player == null)
     {
@@ -76,7 +106,7 @@ public class MatchService(PlayerContext context) : IMatchService
 
     var match = new Match()
     {
-      PlayerId = playerId,
+      PlayerId = player.Id,
       GameClientVersion = gameClientVersion
     };
 
