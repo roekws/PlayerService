@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Players.Core.Data;
 using Players.Core.Entities;
 using Players.Core.Data.Results;
+using Players.Core.Data.Errors;
 
 namespace Players.Core.Services;
 
@@ -9,7 +10,7 @@ public class MatchService(PlayerContext context) : IMatchService
 {
   private readonly PlayerContext _context = context;
 
-  public async Task<Match?> GetByIdAsync(long id, bool detailed)
+  public async Task<Result<Match>> GetByIdAsync(long id, bool detailed)
   {
     var query = _context.Matches
       .AsNoTracking()
@@ -20,10 +21,14 @@ public class MatchService(PlayerContext context) : IMatchService
       query = IncludeDetails(query);
     }
 
-    return await query.FirstOrDefaultAsync();
+    var match = await query.FirstOrDefaultAsync();
+
+    return match == null ?
+      Result<Match>.Failure(MatchErrors.NotFound) :
+      Result<Match>.Success(match);
   }
 
-  public async Task<Match?> GetActiveByPlayerIdAsync(long playerId, bool detailed)
+  public async Task<Result<Match>> GetActiveByPlayerIdAsync(long playerId, bool detailed)
   {
     var query = _context.Matches
       .AsNoTracking()
@@ -34,7 +39,11 @@ public class MatchService(PlayerContext context) : IMatchService
       query = IncludeDetails(query);
     }
 
-    return await query.FirstOrDefaultAsync();
+    var match = await query.FirstOrDefaultAsync();
+
+    return match == null ?
+      Result<Match>.Failure(MatchErrors.NotFound) :
+      Result<Match>.Success(match);
   }
 
   public async Task<PaginatedList<Match>> GetPaginatedByPlayerIdAsync(
@@ -56,13 +65,13 @@ public class MatchService(PlayerContext context) : IMatchService
     return await PaginatedList<Match>.CreateAsync(query, pageIndex, pageSize);
   }
 
-  public async Task<Match?> CreateMatchAsync(long playerId, long gameClientVersion)
+  public async Task<Result<Match>> CreateMatchAsync(long playerId, long gameClientVersion)
   {
     var player = await _context.Players.FindAsync(playerId);
 
     if (player == null)
     {
-      return null;
+      return Result<Match>.Failure(PlayerErrors.NotFound);
     }
 
     var match = new Match()
@@ -72,9 +81,12 @@ public class MatchService(PlayerContext context) : IMatchService
     };
 
     _context.Matches.Add(match);
-    await _context.SaveChangesAsync();
 
-    return match;
+    var rowsAffected = await _context.SaveChangesAsync();
+
+    return rowsAffected > 0 ?
+      Result<Match>.Success(match) :
+      Result<Match>.Failure(MatchErrors.CreateFailed);
   }
 
   private static IQueryable<Match> IncludeDetails(IQueryable<Match> query)
