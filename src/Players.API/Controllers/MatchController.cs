@@ -1,16 +1,14 @@
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Players.API.Infrastructure.Authorization.Claims;
-using Players.API.Infrastructure.Errors;
-using Players.API.Models;
+using Players.API.Models.Responses;
 using Players.Core.Services;
 
 namespace Players.API.Controllers;
 
 [ApiController]
 [Route("api/match")]
-public class MatchController(IMatchService matchService, IPlayerService playerService) : ControllerBase
+public class MatchController(IMatchService matchService, IPlayerService playerService) : BaseController
 {
   private readonly IMatchService matchService = matchService;
   private readonly IPlayerService playerService = playerService;
@@ -18,51 +16,35 @@ public class MatchController(IMatchService matchService, IPlayerService playerSe
   [AllowAnonymous]
   [HttpGet("{id}")]
   [ProducesResponseType<MatchDto>(StatusCodes.Status200OK)]
-  [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
-  public async Task<ActionResult> GetMatchById(long id, bool detailed)
+  [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+  [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
+  public async Task<IActionResult> GetMatchById(long id, bool detailed)
   {
-    var match = await matchService.GetByIdAsync(id, detailed);
+    var result = await matchService.GetByIdAsync(id, detailed);
 
-    if (match == null)
-    {
-      return NotFound(new ErrorResponse(ApiErrors.MatchNotFound));
-    }
-
-    return Ok(new MatchDto(match));
+    return result.Match(
+      onSuccess: match => Ok(new MatchDto(match)),
+      onFailure: Problem
+    );
   }
 
   [Authorize(Policy = Policies.GameOnly)]
   [HttpPost()]
   [ProducesResponseType<MatchDto>(StatusCodes.Status201Created)]
-  [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
+  [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-  public async Task<ActionResult> CreateMatch()
+  [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
+  public async Task<IActionResult> CreateMatch()
   {
     var dotaId = long.Parse(User.FindFirst(PlayersClaimTypes.DotaId)!.Value);
     var steamId = long.Parse(User.FindFirst(PlayersClaimTypes.SteamId)!.Value);
     var gameClientVersion = long.Parse(User.FindFirst(PlayersClaimTypes.GameClientVersion)!.Value);
 
-    var player = await playerService.GetByDotaSteamIdsAsync(dotaId, steamId);
+    var result = await matchService.CreateMatchAsync(dotaId, steamId, gameClientVersion);
 
-    if (player == null)
-    {
-      return NotFound(new ErrorResponse(ApiErrors.PlayerNotFound));
-    }
-
-    var activeMatch = await matchService.GetActiveByPlayerIdAsync(player.Id, detailed: false);
-
-    if (activeMatch != null)
-    {
-      return NotFound(new ErrorResponse(ApiErrors.ActiveMatchExists));
-    }
-
-    var addMatch = await matchService.CreateMatchAsync(player.Id, gameClientVersion);
-
-    if (addMatch == null)
-    {
-      return NotFound(new ErrorResponse(ApiErrors.MatchCreationError));
-    }
-
-    return Ok(new MatchDto(addMatch));
+    return result.Match(
+       onSuccess: match => Ok(new MatchDto(match)),
+       onFailure: Problem
+     );
   }
 }
