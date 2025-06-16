@@ -1,5 +1,6 @@
 using Players.Core.Entities;
 using Players.Core.Data.Results;
+using Players.Core.Enums;
 
 namespace Players.Core.Services;
 
@@ -15,4 +16,5 @@ public interface IMatchService
     int pageSize = 10
   );
   Task<Result<Match>> CreateMatchAsync(long dotaId, long steamId, long gameClientVersion);
+  Task<Result<Character>> CreateCharacterAsync(long id, Hero hero);
 }

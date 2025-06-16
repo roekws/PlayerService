@@ -3,6 +3,7 @@ using Players.Core.Data;
 using Players.Core.Entities;
 using Players.Core.Data.Results;
 using Players.Core.Data.Errors;
+using Players.Core.Enums;
 
 namespace Players.Core.Services;
 
@@ -58,7 +59,7 @@ public class MatchService(PlayerContext context) : IMatchService
       Result<Match>.Success(match);
   }
 
-  public async Task<PaginatedList<Match>> GetPaginatedByPlayerIdAsync(
+  public async Task<PaginatedList<Match>> GetPaginatedByPlayerAsync(
     long dotaId,
     long steamId,
     bool detailed,
@@ -73,14 +74,12 @@ public class MatchService(PlayerContext context) : IMatchService
         player.SteamId == steamId
       );
 
-    if (player == null)
-    {
-      return Result<Match>.Failure(PlayerErrors.NotFound);
-    }
-
     var query = _context.Matches
       .AsNoTracking()
-      .Where(m => m.PlayerId == player.Id);
+      .Where(m =>
+        m.Player.DotaId == dotaId &&
+        m.Player.SteamId == steamId
+        );
 
     if (detailed)
     {
@@ -117,6 +116,44 @@ public class MatchService(PlayerContext context) : IMatchService
     return rowsAffected > 0 ?
       Result<Match>.Success(match) :
       Result<Match>.Failure(MatchErrors.CreateFailed);
+  }
+
+  public async Task<Result<Character>> CreateCharacterAsync(long id, Hero hero)
+  {
+    var match = await _context.Matches.FindAsync(id);
+
+    if (match == null)
+    {
+      return Result<Character>.Failure(MatchErrors.NotFound);
+    }
+
+    if (match.State != MatchState.Active)
+    {
+      return Result<Character>.Failure(MatchErrors.NotActive);
+    }
+
+    if (match.CharacterId != null)
+    {
+      return Result<Character>.Failure(CharacterErrors.AlreadyExisted);
+    }
+
+    if (match.CharacterId != null)
+    {
+      return Result<Character>.Failure(CharacterErrors.AlreadyExisted);
+    }
+
+    var character = new Character
+    {
+      Hero = hero
+    };
+
+    match.Character = character;
+
+    var rowsAffected = await _context.SaveChangesAsync();
+
+    return rowsAffected > 0 ?
+      Result<Character>.Success(character) :
+      Result<Character>.Failure(CharacterErrors.CreateFailed);
   }
 
   private static IQueryable<Match> IncludeDetails(IQueryable<Match> query)

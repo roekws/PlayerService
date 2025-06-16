@@ -8,6 +8,9 @@ public static class MatchErrors
   public static Error ActiveMatchExists =>
     new(ErrorType.Validation, "#active_match_exists", "Player already has an active match in progress");
 
+  public static Error NotActive =>
+    new(ErrorType.Failure, "#match_not_active", "Match is not active");
+
   public static Error CreateFailed =>
     new(ErrorType.Failure, "#cant_create_new_match", "Failed to create a new match");
 
