@@ -1,0 +1,28 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build and run with compose
+      env:
+        ASPNETCORE_ENVIRONMENT: ${{ secrets.ASPNETCORE_ENVIRONMENT }}
+        DB_NAME: ${{ secrets.DB_NAME }}
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        SERVER_KEY: ${{ secrets.SERVER_KEY }}
+        ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
+      run: |
+        docker-compose -f docker-compose.yml up --build -d
+
+    - name: Verify services
+      run: |
+        docker ps
+        docker-compose logs
