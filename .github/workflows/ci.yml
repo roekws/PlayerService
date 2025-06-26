@@ -34,4 +34,4 @@ jobs:
     - name: Verify services
       run: |
         docker ps
-        docker-compose logs
+        docker compose logs
