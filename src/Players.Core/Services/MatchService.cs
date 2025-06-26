@@ -126,6 +126,18 @@ public class MatchService(PlayerContext context) : IMatchService
       return Result<Match>.Failure(PlayerErrors.NotFound);
     }
 
+    var existingActiveMatch = await _context.Matches
+      .AsNoTracking()
+      .AnyAsync(Match =>
+        Match.PlayerId == player.Id &&
+        Match.State == MatchState.Active
+      );
+
+    if (existingActiveMatch)
+    {
+      return Result<Match>.Failure(MatchErrors.ActiveMatchExists);
+    }
+
     var match = new Match()
     {
       PlayerId = player.Id,
