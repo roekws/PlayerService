@@ -4,7 +4,7 @@
 ## Get latest from `dotnet new gitignore`
 
 # env files
-.env
+.env*
 appsettings.*json
 
 # User-specific files

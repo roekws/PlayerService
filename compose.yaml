@@ -1,8 +1,5 @@
 services:
   api:
-    env_file:
-      - path: ./.env
-        required: true
     build:
       context: .
       target: final

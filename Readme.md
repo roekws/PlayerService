@@ -70,7 +70,7 @@ Setting up project locally.
   dotnet ef migrations add NewMigration --project src/Players.Core --startup-project src/Players.API
   ```
 
-1. Create a .env file in the project root with these variables (example values):
+1. Create a .env.dev file in the project root with these variables (example values):
   ```sh
   DB_NAME=dbname
   DB_USER=dbuser
@@ -82,9 +82,9 @@ Setting up project locally.
   ```
 
 2. Build and start:
-   ```sh
-   docker-compose up --build
-   ```
+  ```sh
+  docker compose --env-file .env.dev up --build
+  ```
 
 3. Access the Interactive API Doc at:
   ```sh
@@ -98,7 +98,7 @@ Setting up project locally.
 
 4. Stop with:
    ```sh
-   docker-compose down
+   docker compose down
    ```
 
 5. Develop with:
@@ -119,7 +119,7 @@ Load Testing:
 
 2. Run tests:
     ```sh
-    docker run --rm --env-file .env -p 5665:5665 -i -v ${PWD}/tests/Load:/scripts grafana/k6 run /scripts/PlayerTest.js
+    docker run --rm --env-file .env.dev -p 5665:5665 -i -v ${PWD}/tests/Load:/scripts grafana/k6 run /scripts/PlayerTest.js
     ```
 
 3. Results:
