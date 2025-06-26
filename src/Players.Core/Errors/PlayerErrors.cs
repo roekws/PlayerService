@@ -11,6 +11,9 @@ public static class PlayerErrors
   public static Error NotPublic =>
     new(ErrorType.AccessForbidden, "#player_profile_private", "The player's profile is not accessible");
 
+  public static Error RetrieveFailed =>
+    new(ErrorType.Failure, "#player_retrieve_failed", "Failed to fetch player data");
+
   public static Error CreateFailed =>
     new(ErrorType.Failure, "#player_create_failed", "Failed to create new player profile");
 

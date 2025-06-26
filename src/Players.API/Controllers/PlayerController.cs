@@ -69,10 +69,12 @@ public class PlayerController(IPlayerService playerService) : BaseController
     [FromQuery] int size = 20
   )
   {
-    var players = await playerService.GetAllPaginatedList(page, size);
-    players.Items.ConvertAll(player => new PlayerDto(player));
+    var result = await playerService.GetAllPaginatedList(page, size);
 
-    return Ok(players);
+    return result.Match(
+      onSuccess: paginatedList => Ok(paginatedList.Items.ConvertAll(player => new PlayerDto(player))),
+      onFailure: Problem
+    );
   }
 
   [Authorize(Policy = Policies.GameOnly)]

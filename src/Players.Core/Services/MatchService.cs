@@ -59,7 +59,7 @@ public class MatchService(PlayerContext context) : IMatchService
       Result<Match>.Success(match);
   }
 
-  public async Task<PaginatedList<Match>> GetPaginatedByPlayerAsync(
+  public async Task<Result<PaginatedList<Match>>> GetPaginatedByPlayerAsync(
     long dotaId,
     long steamId,
     bool detailed,
@@ -67,26 +67,39 @@ public class MatchService(PlayerContext context) : IMatchService
     int pageSize = 10
   )
   {
-    var player = await _context.Players
-      .AsNoTracking()
-      .FirstOrDefaultAsync(player =>
-        player.DotaId == dotaId &&
-        player.SteamId == steamId
-      );
-
-    var query = _context.Matches
-      .AsNoTracking()
-      .Where(match =>
-        match.Player.DotaId == dotaId &&
-        match.Player.SteamId == steamId
+    try
+    {
+      var player = await _context.Players
+        .AsNoTracking()
+        .FirstOrDefaultAsync(player =>
+          player.DotaId == dotaId &&
+          player.SteamId == steamId
         );
 
-    if (detailed)
-    {
-      query = IncludeDetails(query);
-    }
+      if (player == null)
+      {
+        return Result<PaginatedList<Match>>.Failure(PlayerErrors.NotFound);
+      }
 
-    return await PaginatedList<Match>.CreateAsync(query, pageIndex, pageSize);
+      var query = _context.Matches
+        .AsNoTracking()
+        .Where(match =>
+          match.Player.DotaId == dotaId &&
+          match.Player.SteamId == steamId
+          );
+
+      if (detailed)
+      {
+        query = IncludeDetails(query);
+      }
+
+      var paginatedMatches = await PaginatedList<Match>.CreateAsync(query, pageIndex, pageSize);
+      return Result<PaginatedList<Match>>.Success(paginatedMatches);
+    }
+    catch
+    {
+      return Result<PaginatedList<Match>>.Failure(MatchErrors.NotFound);
+    }
   }
 
   public async Task<Result<Match>> CreateMatchAsync(long dotaId, long steamId, long gameClientVersion)

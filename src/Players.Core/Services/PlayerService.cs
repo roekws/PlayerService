@@ -57,16 +57,22 @@ public class PlayerService(PlayerContext context) : IPlayerService
       Result<Player>.Success(player);
   }
 
-  public async Task<PaginatedList<Player>> GetAllPaginatedList(
+  public async Task<Result<PaginatedList<Player>>> GetAllPaginatedList(
     int pageIndex = 1,
     int pageSize = 10
   )
   {
-    return await PaginatedList<Player>.CreateAsync(
-      _context.Players.AsNoTracking(),
-      pageIndex,
-      pageSize
-    );
+    try
+    {
+      var query = _context.Players.AsNoTracking();
+      var paginatedResult = await PaginatedList<Player>.CreateAsync(query, pageIndex, pageSize);
+
+      return Result<PaginatedList<Player>>.Success(paginatedResult);
+    }
+    catch
+    {
+      return Result<PaginatedList<Player>>.Failure(PlayerErrors.RetrieveFailed);
+    }
   }
 
   public async Task<Result<Player>> RegisterAsync(long dotaId, long steamId)

@@ -9,7 +9,7 @@ public interface IPlayerService
   Task<Result<Player>> GetByDotaIdAsync(long dotaId);
   Task<Result<Player>> GetBySteamIdAsync(long steamId);
   Task<Result<Player>> GetByDotaSteamIdsAsync(long dotaId, long steamId);
-  Task<PaginatedList<Player>> GetAllPaginatedList(int pageIndex = 1, int pageSize = 10);
+  Task<Result<PaginatedList<Player>>> GetAllPaginatedList(int pageIndex = 1, int pageSize = 10);
   Task<Result<Player>> RegisterAsync(long dotaId, long steamId);
   Task<Result<Player>> UpdatePublicDataAsync(
     bool? isPublicForLadder,
