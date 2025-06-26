@@ -16,6 +16,11 @@ public interface IMatchService
     int pageIndex = 1,
     int pageSize = 10
   );
+  Task<Result<PaginatedList<Match>>> GetPaginatedAllAsync(
+    bool detailed,
+    int pageIndex = 1,
+    int pageSize = 10
+  );
   Task<Result<Match>> CreateMatchAsync(long dotaId, long steamId, long gameClientVersion);
   Task<Result<Character>> CreateCharacterAsync(long id, Hero hero);
 }

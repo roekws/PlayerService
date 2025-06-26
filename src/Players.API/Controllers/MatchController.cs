@@ -78,4 +78,23 @@ public class MatchController(IMatchService matchService, IPlayerService playerSe
        onFailure: Problem
      );
   }
+
+  [Authorize(Policy = Policies.AdminOnly)]
+  [HttpGet("all")]
+  [ProducesResponseType<PaginatedList<MatchDto>>(StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+  [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
+  public async Task<IActionResult> GetMatchesPaginated(
+    [FromQuery] bool detailed,
+    [FromQuery] int page = 1,
+    [FromQuery] int size = 20
+  )
+  {
+    var result = await matchService.GetPaginatedAllAsync(detailed, page, size);
+
+    return result.Match(
+      onSuccess: paginatedList => Ok(paginatedList.Items.ConvertAll(match => new MatchDto(match))),
+      onFailure: Problem
+    );
+  }
 }

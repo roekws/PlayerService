@@ -156,6 +156,29 @@ public class MatchService(PlayerContext context) : IMatchService
     }
   }
 
+  public async Task<Result<PaginatedList<Match>>> GetPaginatedAllAsync(
+    bool detailed,
+    int pageIndex = 1,
+    int pageSize = 10
+  )
+  {
+    try
+    {
+      var matchQuery = _context.Matches.AsNoTracking();
+
+      if (detailed)
+      {
+        matchQuery = IncludeDetails(matchQuery);
+      }
+
+      var paginatedMatches = await PaginatedList<Match>.CreateAsync(matchQuery, pageIndex, pageSize);
+      return Result<PaginatedList<Match>>.Success(paginatedMatches);
+    }
+    catch
+    {
+      return Result<PaginatedList<Match>>.Failure(MatchErrors.NotFound);
+    }
+  }
   public async Task<Result<Character>> CreateCharacterAsync(long id, Hero hero)
   {
     var match = await _context.Matches.FindAsync(id);
