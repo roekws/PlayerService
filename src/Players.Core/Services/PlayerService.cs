@@ -83,19 +83,22 @@ public class PlayerService(PlayerContext context) : IPlayerService
       return Result<Player>.Failure(PlayerErrors.AlreadyExists);
     }
 
-    var AddPlayer = new Player()
+    try
     {
-      DotaId = dotaId,
-      SteamId = steamId
-    };
+      var AddPlayer = new Player()
+      {
+        DotaId = dotaId,
+        SteamId = steamId
+      };
 
-    _context.Players.Add(AddPlayer);
-
-    var rowsAffected = await _context.SaveChangesAsync();
-
-    return rowsAffected > 0 ?
-      Result<Player>.Success(AddPlayer) :
-      Result<Player>.Failure(PlayerErrors.CreateFailed);
+      _context.Players.Add(AddPlayer);
+      var rowsAffected = await _context.SaveChangesAsync();
+      return Result<Player>.Success(AddPlayer);
+    }
+    catch
+    {
+      return Result<Player>.Failure(PlayerErrors.CreateFailed);
+    }
   }
 
   public async Task<Result<Player>> UpdatePublicDataAsync(
@@ -132,12 +135,13 @@ public class PlayerService(PlayerContext context) : IPlayerService
       return Result<Player>.Failure(PlayerErrors.NotFound);
     }
 
-    player.PublicName = publicName ?? player.PublicName;
-    player.IsPublicForLadder = isPublicForLadder ?? player.IsPublicForLadder;
-
     try
     {
-      var rowsAffected = await _context.SaveChangesAsync();
+      player.PublicName = publicName ?? player.PublicName;
+      player.IsPublicForLadder = isPublicForLadder ?? player.IsPublicForLadder;
+
+      await _context.SaveChangesAsync();
+
       return Result<Player>.Success(player);
     }
     catch
@@ -167,14 +171,19 @@ public class PlayerService(PlayerContext context) : IPlayerService
       return Result<Player>.Failure(PlayerErrors.AlreadyExists);
     }
 
-    player.DotaId = newDotaId;
-    player.SteamId = newSteamId;
+    try
+    {
+      player.DotaId = newDotaId;
+      player.SteamId = newSteamId;
 
-    var rowsAffected = await _context.SaveChangesAsync();
+      await _context.SaveChangesAsync();
 
-    return rowsAffected > 0 ?
-      Result<Player>.Success(player) :
-      Result<Player>.Failure(PlayerErrors.CreateFailed);
+      return Result<Player>.Success(player);
+    }
+    catch
+    {
+      return Result<Player>.Failure(PlayerErrors.CreateFailed);
+    }
   }
 
   public async Task<Result> DeleteByIdAsync(long id)
@@ -186,13 +195,17 @@ public class PlayerService(PlayerContext context) : IPlayerService
       return Result.Failure(PlayerErrors.NotFound);
     }
 
-    _context.Players.Remove(player);
+    try
+    {
+      _context.Players.Remove(player);
+      await _context.SaveChangesAsync();
 
-    var rowsAffected = await _context.SaveChangesAsync();
-
-    return rowsAffected > 0 ?
-      Result.Success() :
-      Result.Failure(PlayerErrors.DeleteFailed);
+      return Result.Success();
+    }
+    catch
+    {
+      return Result.Failure(PlayerErrors.DeleteFailed);
+    }
   }
 
   public async Task<Result<BatchDeleteResult>> BatchDeleteAsync(long[] ids)
@@ -223,14 +236,18 @@ public class PlayerService(PlayerContext context) : IPlayerService
       return Result<BatchDeleteResult>.Failure(PlayerErrors.NotFound);
     }
 
-    var deletedIds = playersToDelete.Select(player => player.Id).ToList();
+    try
+    {
+      var deletedIds = playersToDelete.Select(player => player.Id).ToList();
 
-    _context.Players.RemoveRange(playersToDelete);
+      _context.Players.RemoveRange(playersToDelete);
+      await _context.SaveChangesAsync();
 
-    var rowsAffected = await _context.SaveChangesAsync();
-
-    return rowsAffected > 0 ?
-      Result<BatchDeleteResult>.Success(new BatchDeleteResult(rowsAffected, notFoundIds, deletedIds)) :
-      Result<BatchDeleteResult>.Failure(PlayerErrors.DeleteFailed);
+      return Result<BatchDeleteResult>.Success(new BatchDeleteResult(deletedIds.Count, notFoundIds, deletedIds));
+    }
+    catch
+    {
+      return Result<BatchDeleteResult>.Failure(PlayerErrors.DeleteFailed);
+    }
   }
 }

@@ -109,13 +109,16 @@ public class MatchService(PlayerContext context) : IMatchService
       GameClientVersion = gameClientVersion
     };
 
-    _context.Matches.Add(match);
-
-    var rowsAffected = await _context.SaveChangesAsync();
-
-    return rowsAffected > 0 ?
-      Result<Match>.Success(match) :
-      Result<Match>.Failure(MatchErrors.CreateFailed);
+    try
+    {
+      _context.Matches.Add(match);
+      await _context.SaveChangesAsync();
+      return Result<Match>.Success(match);
+    }
+    catch
+    {
+      return Result<Match>.Failure(MatchErrors.CreateFailed);
+    }
   }
 
   public async Task<Result<Character>> CreateCharacterAsync(long id, Hero hero)
@@ -147,13 +150,16 @@ public class MatchService(PlayerContext context) : IMatchService
       Hero = hero
     };
 
-    match.Character = character;
-
-    var rowsAffected = await _context.SaveChangesAsync();
-
-    return rowsAffected > 0 ?
-      Result<Character>.Success(character) :
-      Result<Character>.Failure(CharacterErrors.CreateFailed);
+    try
+    {
+      match.Character = character;
+      var rowsAffected = await _context.SaveChangesAsync();
+      return Result<Character>.Success(character);
+    }
+    catch
+    {
+      return Result<Character>.Failure(CharacterErrors.CreateFailed);
+    }
   }
 
   private static IQueryable<Match> IncludeDetails(IQueryable<Match> query)
