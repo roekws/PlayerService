@@ -11,9 +11,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Docker Compose
+    - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
+
+    - name: Set up Buildx
       uses: docker/setup-buildx-action@v3
+
+    - name: Set up Docker Compose
       uses: docker/setup-compose-action@v3
 
     - name: Build and run
