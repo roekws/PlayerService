@@ -132,11 +132,18 @@ public class PlayerService(PlayerContext context) : IPlayerService
       return Result<Player>.Failure(PlayerErrors.NotFound);
     }
 
-    var rowsAffected = await _context.SaveChangesAsync();
+    player.PublicName = publicName ?? player.PublicName;
+    player.IsPublicForLadder = isPublicForLadder ?? player.IsPublicForLadder;
 
-    return rowsAffected > 0 ?
-      Result<Player>.Success(player) :
-      Result<Player>.Failure(PlayerErrors.UpdateFailed);
+    try
+    {
+      var rowsAffected = await _context.SaveChangesAsync();
+      return Result<Player>.Success(player);
+    }
+    catch
+    {
+      return Result<Player>.Failure(PlayerErrors.UpdateFailed);
+    }
   }
 
   public async Task<Result<Player>> ChangeDotaSteamIds(long id, long newDotaId, long newSteamId)
