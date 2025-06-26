@@ -36,12 +36,6 @@ export const options = {
   },
 };
 
-export function setup() {
-  for (let i = 0; i < 10; i++) {
-    registerNewPlayer();
-  }
-}
-
 export default function () {
   registerNewPlayer();
   getAuthenticatedPlayer();
@@ -63,6 +57,7 @@ function getAuthenticatedPlayer() {
       'X-Dota-Id': registeredDotaIds[playerIdx].toString(),
       'X-Steam-Id': registeredSteamIds[playerIdx].toString(),
       'X-Game-Client-Version': TEST_VERSION,
+      'Content-Type': 'application/json'
     },
   });
 
@@ -135,7 +130,7 @@ function editPlayer() {
         'X-Dota-Id': registeredDotaIds[playerIdx].toString(),
         'X-Steam-Id': registeredSteamIds[playerIdx].toString(),
         'X-Game-Client-Version': TEST_VERSION,
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json'
       },
     }
   );
@@ -150,8 +145,8 @@ function editPlayer() {
 }
 
 function registerNewPlayer() {
-  let dotaId = randomIntBetween(100000, 999999);
-  let steamId = randomIntBetween(100000, 999999);
+  let dotaId = randomIntBetween(1, 99999);
+  let steamId = randomIntBetween(1, 99999);
 
   while (registeredDotaIds.includes(dotaId)) dotaId++;
   while (registeredSteamIds.includes(steamId)) steamId++;
