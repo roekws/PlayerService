@@ -203,6 +203,7 @@ public class PlayerService(PlayerContext context) : IPlayerService
     }
 
     List<long> notFoundIds = [];
+    var playersToDelete = new List<Player>();
 
     foreach (var id in ids)
     {
@@ -214,13 +215,22 @@ public class PlayerService(PlayerContext context) : IPlayerService
         continue;
       }
 
-      _context.Players.Remove(player);
+      playersToDelete.Add(player);
     }
+
+    if (playersToDelete.Count == 0)
+    {
+      return Result<BatchDeleteResult>.Failure(PlayerErrors.NotFound);
+    }
+
+    var deletedIds = playersToDelete.Select(player => player.Id).ToList();
+
+    _context.Players.RemoveRange(playersToDelete);
 
     var rowsAffected = await _context.SaveChangesAsync();
 
     return rowsAffected > 0 ?
-      Result<BatchDeleteResult>.Success(new BatchDeleteResult(rowsAffected, notFoundIds)) :
+      Result<BatchDeleteResult>.Success(new BatchDeleteResult(rowsAffected, notFoundIds, deletedIds)) :
       Result<BatchDeleteResult>.Failure(PlayerErrors.DeleteFailed);
   }
 }
