@@ -103,7 +103,7 @@ Setting up project locally.
 
 5. Develop with:
     ```sh
-   docker compose watch
+   docker compose watch --env-file .env.dev
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
