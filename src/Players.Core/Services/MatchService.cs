@@ -60,8 +60,9 @@ public class MatchService(PlayerContext context) : IMatchService
   }
 
   public async Task<Result<PaginatedList<Match>>> GetPaginatedByPlayerAsync(
-    long dotaId,
-    long steamId,
+    long? dotaId,
+    long? steamId,
+    long? id,
     bool detailed,
     int pageIndex = 1,
     int pageSize = 10
@@ -69,31 +70,40 @@ public class MatchService(PlayerContext context) : IMatchService
   {
     try
     {
-      var player = await _context.Players
-        .AsNoTracking()
-        .FirstOrDefaultAsync(player =>
-          player.DotaId == dotaId &&
-          player.SteamId == steamId
-        );
+      var playerQuery = _context.Players.AsQueryable();
+      var matchQuery = _context.Matches.AsNoTracking();
 
-      if (player == null)
+      if (id.HasValue)
+      {
+        playerQuery = playerQuery.Where(player => player.Id == id.Value);
+        matchQuery = matchQuery.Where(match => match.PlayerId == id.Value);
+      }
+      else if (steamId.HasValue)
+      {
+        playerQuery = playerQuery.Where(player => player.SteamId == steamId.Value);
+        matchQuery = matchQuery.Where(match => match.Player.SteamId == steamId.Value);
+      }
+      else if (dotaId.HasValue)
+      {
+        playerQuery = playerQuery.Where(player => player.DotaId == dotaId.Value);
+        matchQuery = matchQuery.Where(match => match.Player.DotaId == dotaId.Value);
+      }
+      else
+      {
+        return Result<PaginatedList<Match>>.Failure(PlayerErrors.NoIdentifierProvided);
+      }
+
+      if (!await playerQuery.AnyAsync())
       {
         return Result<PaginatedList<Match>>.Failure(PlayerErrors.NotFound);
       }
 
-      var query = _context.Matches
-        .AsNoTracking()
-        .Where(match =>
-          match.Player.DotaId == dotaId &&
-          match.Player.SteamId == steamId
-          );
-
       if (detailed)
       {
-        query = IncludeDetails(query);
+        matchQuery = IncludeDetails(matchQuery);
       }
 
-      var paginatedMatches = await PaginatedList<Match>.CreateAsync(query, pageIndex, pageSize);
+      var paginatedMatches = await PaginatedList<Match>.CreateAsync(matchQuery, pageIndex, pageSize);
       return Result<PaginatedList<Match>>.Success(paginatedMatches);
     }
     catch
