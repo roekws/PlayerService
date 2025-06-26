@@ -171,4 +171,22 @@ public class PlayerController(IPlayerService playerService) : BaseController
       onFailure: Problem
     );
   }
+
+  [Authorize(Policy = Policies.AdminOnly)]
+  [HttpDelete()]
+  [ProducesResponseType<BatchDeleteResult>(StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+  [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+  [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
+  public async Task<IActionResult> RemovePlayers(
+    [FromBody] long[] ids
+  )
+  {
+    var result = await playerService.BatchDeleteAsync(ids);
+
+    return result.Match(
+      onSuccess: Ok,
+      onFailure: Problem
+    );
+  }
 }

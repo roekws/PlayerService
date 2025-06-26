@@ -194,4 +194,33 @@ public class PlayerService(PlayerContext context) : IPlayerService
       Result.Success() :
       Result.Failure(PlayerErrors.DeleteFailed);
   }
+
+  public async Task<Result<BatchDeleteResult>> BatchDeleteAsync(long[] ids)
+  {
+    if (ids == null || ids.Length == 0)
+    {
+      return Result<BatchDeleteResult>.Failure(PlayerErrors.NoIdentifierProvided);
+    }
+
+    List<long> notFoundIds = [];
+
+    foreach (var id in ids)
+    {
+      var player = await _context.Players.FindAsync(id);
+
+      if (player == null)
+      {
+        notFoundIds.Add(id);
+        continue;
+      }
+
+      _context.Players.Remove(player);
+    }
+
+    var rowsAffected = await _context.SaveChangesAsync();
+
+    return rowsAffected > 0 ?
+      Result<BatchDeleteResult>.Success(new BatchDeleteResult(rowsAffected, notFoundIds)) :
+      Result<BatchDeleteResult>.Failure(PlayerErrors.DeleteFailed);
+  }
 }
