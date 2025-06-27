@@ -11,6 +11,9 @@ public static class PlayerErrors
   public static Error NotPublic =>
     new(ErrorType.AccessForbidden, "#player_profile_private", "The player's profile is not accessible");
 
+  public static Error PublicNameInvalid =>
+    new(ErrorType.Validation, "#player_public_name_invalid", "Public name must be 1-20 english letters only");
+
   public static Error RetrieveFailed =>
     new(ErrorType.Failure, "#player_retrieve_failed", "Failed to fetch player data");
 

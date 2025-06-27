@@ -122,6 +122,18 @@ public class PlayerService(PlayerContext context) : IPlayerService
       return Result<Player>.Failure(PlayerErrors.NotFound);
     }
 
+    if (publicName != null)
+    {
+      var isEmpty = publicName.Length == 0;
+      var isTooLong = publicName.Length > 20;
+      var containsNonLetters = !publicName.All(char.IsLetter);
+
+      if (isEmpty || isTooLong || containsNonLetters)
+      {
+        return Result<Player>.Failure(PlayerErrors.PublicNameInvalid);
+      }
+    }
+
     try
     {
       player.PublicName = publicName ?? player.PublicName;
