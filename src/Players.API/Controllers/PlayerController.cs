@@ -4,6 +4,7 @@ using Players.API.Infrastructure.Authorization.Claims;
 using Players.API.Models.Requests.Player;
 using Players.API.Models.Responses;
 using Players.Core.Data.Results;
+using Players.Core.Entities;
 using Players.Core.Services;
 
 namespace Players.API.Controllers;
@@ -15,43 +16,18 @@ public class PlayerController(IPlayerService playerService) : BaseController
   private readonly IPlayerService playerService = playerService;
 
   [AllowAnonymous]
-  [HttpGet("{id}")]
+  [HttpGet()]
   [ProducesResponseType<PlayerDto>(StatusCodes.Status200OK)]
+  [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-  public async Task<IActionResult> GetPlayerById(long id)
+  public async Task<IActionResult> GetPlayer(
+    [FromQuery] long? id,
+    [FromQuery] long? dotaId,
+    [FromQuery] long? steamId
+  )
   {
-    var result = await playerService.GetByIdAsync(id);
-
-    return result.Match(
-      onSuccess: player => Ok(new PlayerDto(player)),
-      onFailure: Problem
-    );
-  }
-
-  [AllowAnonymous]
-  [HttpGet("dota={dotaId}")]
-  [ProducesResponseType<PlayerDto>(StatusCodes.Status200OK)]
-  [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
-  [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-  public async Task<IActionResult> GetPlayerByDotaId(long dotaId)
-  {
-    var result = await playerService.GetByDotaIdAsync(dotaId);
-
-    return result.Match(
-      onSuccess: player => Ok(new PlayerDto(player)),
-      onFailure: Problem
-    );
-  }
-
-  [AllowAnonymous]
-  [HttpGet("steam={steamId}")]
-  [ProducesResponseType<PlayerDto>(StatusCodes.Status200OK)]
-  [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
-  [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-  public async Task<IActionResult> GetPlayerBySteamId(long steamId)
-  {
-    var result = await playerService.GetBySteamIdAsync(steamId);
+    var result = await playerService.GetAsync(id, dotaId, steamId);
 
     return result.Match(
       onSuccess: player => Ok(new PlayerDto(player)),
@@ -62,6 +38,7 @@ public class PlayerController(IPlayerService playerService) : BaseController
   [Authorize(Policy = Policies.AdminOnly)]
   [HttpGet("all")]
   [ProducesResponseType<PaginatedList<PlayerDto>>(StatusCodes.Status200OK)]
+  [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
   public async Task<IActionResult> GetAllPlayersPaginated(
@@ -69,7 +46,7 @@ public class PlayerController(IPlayerService playerService) : BaseController
     [FromQuery] int size = 20
   )
   {
-    var result = await playerService.GetAllPaginatedList(page, size);
+    var result = await playerService.GetAllPaginatedListAsync(page, size);
 
     return result.Match(
       onSuccess: paginatedList => Ok(paginatedList.Items.ConvertAll(player => new PlayerDto(player))),
@@ -91,17 +68,17 @@ public class PlayerController(IPlayerService playerService) : BaseController
     var result = await playerService.RegisterAsync(dotaId, steamId);
 
     return result.Match(
-      onSuccess: player => CreatedAtAction(
-          actionName: nameof(GetPlayerById),
-          routeValues: new { id = player.Id },
-          value: new PlayerDto(player)
-        ),
+      onSuccess: player =>
+        {
+          var uri = new Uri($"{Request.Scheme}://{Request.Host}/api/player?id={player.Id}");
+          return Created(uri, new PlayerDto(player));
+        },
       onFailure: Problem
     );
   }
 
   [Authorize(Policy = Policies.GameOnly)]
-  [HttpGet]
+  [HttpGet("me")]
   [ProducesResponseType<PlayerDto>(StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
@@ -111,7 +88,7 @@ public class PlayerController(IPlayerService playerService) : BaseController
     var dotaId = long.Parse(User.FindFirst(PlayersClaimTypes.DotaId)!.Value);
     var steamId = long.Parse(User.FindFirst(PlayersClaimTypes.SteamId)!.Value);
 
-    var result = await playerService.GetByDotaSteamIdsAsync(dotaId, steamId);
+    var result = await playerService.GetAsync(null, dotaId, steamId);
 
     return result.Match(
       onSuccess: player => Ok(new PlayerDto(player)),
@@ -119,10 +96,10 @@ public class PlayerController(IPlayerService playerService) : BaseController
     );
   }
 
-  // TO DO: Name rules
   [Authorize(Policy = Policies.GameOnly)]
   [HttpPatch("edit")]
   [ProducesResponseType<PlayerDto>(StatusCodes.Status200OK)]
+  [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
@@ -143,6 +120,7 @@ public class PlayerController(IPlayerService playerService) : BaseController
   [Authorize(Policy = Policies.AdminOnly)]
   [HttpPatch("idchange")]
   [ProducesResponseType<PlayerDto>(StatusCodes.Status200OK)]
+  [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
@@ -150,7 +128,7 @@ public class PlayerController(IPlayerService playerService) : BaseController
     [FromBody] ChangePlayerIdRequest request
   )
   {
-    var result = await playerService.ChangeDotaSteamIds(request.Id, request.NewDotaId, request.NewSteamId);
+    var result = await playerService.ChangeDotaSteamIdsAsync(request.Id, request.NewDotaId, request.NewSteamId);
 
     return result.Match(
       onSuccess: player => Ok(new PlayerDto(player)),
@@ -161,6 +139,7 @@ public class PlayerController(IPlayerService playerService) : BaseController
   [Authorize(Policy = Policies.AdminOnly)]
   [HttpDelete("{id}")]
   [ProducesResponseType(StatusCodes.Status204NoContent)]
+  [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
@@ -177,6 +156,7 @@ public class PlayerController(IPlayerService playerService) : BaseController
   [Authorize(Policy = Policies.AdminOnly)]
   [HttpDelete()]
   [ProducesResponseType<BatchDeleteResult>(StatusCodes.Status200OK)]
+  [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]

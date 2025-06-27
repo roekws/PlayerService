@@ -10,54 +10,35 @@ public class PlayerService(PlayerContext context) : IPlayerService
 {
   private readonly PlayerContext _context = context;
 
-  public async Task<Result<Player>> GetByIdAsync(long id)
+  public async Task<Result<Player>> GetAsync(long? id, long? dotaId, long? steamId)
   {
-    var player = await _context.Players
-      .AsNoTracking()
-      .FirstOrDefaultAsync(player => player.Id == id);
+    var query = _context.Players.AsNoTracking();
+
+    if (id.HasValue)
+    {
+      query = query.Where(player => player.Id == id.Value);
+    }
+    else if (steamId.HasValue)
+    {
+      query = query.Where(player => player.SteamId == steamId.Value);
+    }
+    else if (dotaId.HasValue)
+    {
+      query = query.Where(player => player.DotaId == dotaId.Value);
+    }
+    else
+    {
+      return Result<Player>.Failure(PlayerErrors.NoIdentifierProvided);
+    }
+
+    var player = await query.FirstOrDefaultAsync();
 
     return player == null ?
       Result<Player>.Failure(PlayerErrors.NotFound) :
       Result<Player>.Success(player);
   }
 
-  public async Task<Result<Player>> GetByDotaIdAsync(long dotaId)
-  {
-    var player = await _context.Players
-      .AsNoTracking()
-      .FirstOrDefaultAsync(player => player.DotaId == dotaId);
-
-    return player == null ?
-      Result<Player>.Failure(PlayerErrors.NotFound) :
-      Result<Player>.Success(player);
-  }
-
-  public async Task<Result<Player>> GetBySteamIdAsync(long steamId)
-  {
-    var player = await _context.Players
-      .AsNoTracking()
-      .FirstOrDefaultAsync(player => player.SteamId == steamId);
-
-    return player == null ?
-      Result<Player>.Failure(PlayerErrors.NotFound) :
-      Result<Player>.Success(player);
-  }
-
-  public async Task<Result<Player>> GetByDotaSteamIdsAsync(long dotaId, long steamId)
-  {
-    var player = await _context.Players
-      .AsNoTracking()
-      .FirstOrDefaultAsync(player =>
-        player.DotaId == dotaId &&
-        player.SteamId == steamId
-      );
-
-    return player == null ?
-      Result<Player>.Failure(PlayerErrors.NotFound) :
-      Result<Player>.Success(player);
-  }
-
-  public async Task<Result<PaginatedList<Player>>> GetAllPaginatedList(
+  public async Task<Result<PaginatedList<Player>>> GetAllPaginatedListAsync(
     int pageIndex = 1,
     int pageSize = 10
   )
@@ -156,7 +137,7 @@ public class PlayerService(PlayerContext context) : IPlayerService
     }
   }
 
-  public async Task<Result<Player>> ChangeDotaSteamIds(long id, long newDotaId, long newSteamId)
+  public async Task<Result<Player>> ChangeDotaSteamIdsAsync(long id, long newDotaId, long newSteamId)
   {
     var player = await _context.Players.FindAsync(id);
 
