@@ -49,6 +49,7 @@ Game loop:
 * ASP.NET Core - web framework
 * EntityFramework Core - Object-Relational Mapper (ORM) for .NET
 * Npgsql - .NET Access to PostgreSQL
+* Docker - Containerization platform
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

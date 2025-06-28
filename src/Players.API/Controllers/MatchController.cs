@@ -30,6 +30,21 @@ public class MatchController(IMatchService matchService, IPlayerService playerSe
     );
   }
 
+  [Authorize(Policy = Policies.GameOnly)]
+  [HttpGet()]
+  public async Task<IActionResult> GetPlayerActiveMatch()
+  {
+    var dotaId = long.Parse(User.FindFirst(PlayersClaimTypes.DotaId)!.Value);
+    var steamId = long.Parse(User.FindFirst(PlayersClaimTypes.SteamId)!.Value);
+
+    var result = await matchService.GetActiveByPlayerAsync(dotaId, steamId, detailed: true);
+
+    return result.Match(
+      onSuccess: match => Ok(new MatchDto(match)),
+      onFailure: Problem
+    );
+  }
+
   [AllowAnonymous]
   [HttpGet("list")]
   [ProducesResponseType<PaginatedList<MatchDto>>(StatusCodes.Status200OK)]
