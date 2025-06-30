@@ -90,8 +90,12 @@ public class MatchController(IMatchService matchService, IPlayerService playerSe
     var result = await matchService.CreateMatchAsync(dotaId, steamId, globalPatchVersion);
 
     return result.Match(
-       onSuccess: match => Ok(new MatchDto(match)),
-       onFailure: Problem
+      onSuccess: player =>
+        {
+          var uri = new Uri($"{Request.Scheme}://{Request.Host}/api/match?id={player.Id}");
+          return Created(uri, new MatchDto(player));
+        },
+      onFailure: Problem
      );
   }
 
