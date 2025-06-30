@@ -7,7 +7,7 @@ namespace Players.Core.Services;
 public interface IMatchService
 {
   Task<Result<Match>> GetByIdAsync(long id, bool detailed);
-  Task<Result<Match>> GetActiveByPlayerAsync(long dotaId, long steamId, bool detailed);
+  Task<Result<Match>> GetActiveByPlayerAsync(long dotaId, long steamId, bool detailed, long gameClientVersion);
   Task<Result<PaginatedList<Match>>> GetPaginatedByPlayerAsync(
     long? dotaId,
     long? steamId,

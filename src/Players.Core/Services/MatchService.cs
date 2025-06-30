@@ -29,7 +29,7 @@ public class MatchService(PlayerContext context) : IMatchService
       Result<Match>.Success(match);
   }
 
-  public async Task<Result<Match>> GetActiveByPlayerAsync(long dotaId, long steamId, bool detailed)
+  public async Task<Result<Match>> GetActiveByPlayerAsync(long dotaId, long steamId, bool detailed, long gameClientVersion)
   {
     var player = await _context.Players
       .AsNoTracking()
@@ -45,7 +45,10 @@ public class MatchService(PlayerContext context) : IMatchService
 
     var query = _context.Matches
       .AsNoTracking()
-      .Where(match => match.PlayerId == player.Id);
+      .Where(match =>
+        match.GameClientVersion == gameClientVersion &&
+        match.PlayerId == player.Id
+      );
 
     if (detailed)
     {

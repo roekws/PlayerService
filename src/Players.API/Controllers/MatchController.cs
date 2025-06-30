@@ -36,8 +36,9 @@ public class MatchController(IMatchService matchService, IPlayerService playerSe
   {
     var dotaId = long.Parse(User.FindFirst(PlayersClaimTypes.DotaId)!.Value);
     var steamId = long.Parse(User.FindFirst(PlayersClaimTypes.SteamId)!.Value);
+    var gameClientVersion = long.Parse(User.FindFirst(PlayersClaimTypes.GameClientVersion)!.Value);
 
-    var result = await matchService.GetActiveByPlayerAsync(dotaId, steamId, detailed: true);
+    var result = await matchService.GetActiveByPlayerAsync(dotaId, steamId, detailed: true, gameClientVersion);
 
     return result.Match(
       onSuccess: match => Ok(new MatchDto(match)),
