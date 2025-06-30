@@ -164,6 +164,7 @@ To extend load tests:
 - [Claims-based authorization in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/claims?view=aspnetcore-9.0)
 - [.NET Docker](https://docs.docker.com/guides/dotnet/)
 - [Grafana k6 load testing tool](https://grafana.com/docs/k6/latest/)
-- []()
+- [(CI) workflow for Building and testing .NET](https://docs.github.com/en/actions/how-tos/use-cases-and-examples/building-and-testing/building-and-testing-net)
+- [(CI) Storing and sharing data from a workflow](https://docs.github.com/en/actions/how-tos/writing-workflows/choosing-what-your-workflow-does/storing-and-sharing-data-from-a-workflow)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

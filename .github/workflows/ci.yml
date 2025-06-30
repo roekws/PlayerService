@@ -44,8 +44,24 @@ jobs:
         run: docker pull grafana/k6
       - name: Run load test
         run: |
-          docker run --add-host=host.docker.internal:host-gateway \
+          docker run --rm \
+            --add-host=host.docker.internal:host-gateway \
             -v $PWD/tests/Load:/scripts \
-            grafana/k6 run /scripts/k6-script.test.ts \
+            -v $PWD/test-results:/output \
+            grafana/k6 run \
+            --out json=/output/k6_results.json \
+            --out csv=/output/k6_results.csv \
+            /scripts/k6-script.test.ts \
             --vus 10 \
             --duration 30s
+      - name: Archive JOSN test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-json-results
+          path: output/test/k6_results.json
+
+      - name: Archive csv test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-csv-results
+          path: output/test/k6_results.csv
