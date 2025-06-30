@@ -42,7 +42,7 @@ jobs:
     - name: Run k6 tests
       run: |
         docker run --rm \
-          --network host \  # Critical - connects to host network
+          --network host \
           -v $PWD/tests/Load:/scripts \
           -v $PWD/test-results:/output \
           grafana/k6 run \
