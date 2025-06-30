@@ -9,8 +9,8 @@ import { SharedArray } from 'k6/data';
 
 const globalPatch = "1";
 const balancePatch = "1";
-const gameKey = __ENV.SERVER_KEY
-const adminKey = __ENV.ADMIN_KEY
+const gameKey = __ENV.SERVER_KEY;
+const adminKey = __ENV.ADMIN_KEY;
 const baseUrl = __ENV.BASE_URL || "http://host.docker.internal:8080";
 
 const playersAPIV1Client = new PlayersAPIV1Client({ baseUrl });
@@ -58,6 +58,10 @@ export default function () {
 
   const postApiPlayerRegisterResponseData = playersAPIV1Client.postApiPlayerRegister(headers);
 
+  check(postApiPlayerRegisterResponseData.response, {
+    'Status is 201 or 400': (r) => r.status === 201 || r.state === 400,
+  });
+
   if (postApiPlayerRegisterResponseData.response.status !== 201) {
     return;
   }
@@ -69,6 +73,10 @@ export default function () {
 
   const getApiPlayerMeResponseData = playersAPIV1Client.getApiPlayerMe(headers);
 
+  check(getApiPlayerMeResponseData.response, {
+    'Status is 200': (r) => r.status === 200,
+  });
+
   ids.push(getApiPlayerMeResponseData.data.id!);
 
   params = {
@@ -77,17 +85,29 @@ export default function () {
 
   const getApiPlayerByDotaIdResponseData = playersAPIV1Client.getApiPlayer(params);
 
+  check(getApiPlayerByDotaIdResponseData.response, {
+    'Status is 200': (r) => r.status === 200,
+  });
+
   params = {
     steamId: steamId
   };
 
   const getApiPlayerBySteamIdResponseData = playersAPIV1Client.getApiPlayer(params);
 
+  check(getApiPlayerBySteamIdResponseData.response, {
+    'Status is 200': (r) => r.status === 200,
+  });
+
   params = {
     id: getApiPlayerMeResponseData.data.id
   };
 
   const getApiPlayerByIdResponseData = playersAPIV1Client.getApiPlayer(params);
+
+  check(getApiPlayerByIdResponseData.response, {
+    'Status is 200': (r) => r.status === 200,
+  });
 
   updatePlayerDataRequest = {
     isPublicForLadder: true,
@@ -99,6 +119,10 @@ export default function () {
     headers,
   );
 
+  check(patchApiPlayerEditResponseData.response, {
+    'Status is 200': (r) => r.status === 200,
+  });
+
   headers = {
     "X-Dedicated-Server-Key": adminKey,
     "X-Dota-Id": dotaId,
@@ -109,7 +133,15 @@ export default function () {
 
   const getApiPlayerAllResponseData = playersAPIV1Client.getApiPlayerAll(headers);
 
+  check(getApiPlayerAllResponseData.response, {
+    'Status is 200': (r) => r.status === 200,
+  });
+
   const getApiMatchAllResponseData = playersAPIV1Client.getApiMatchAll(headers);
+
+  check(getApiMatchAllResponseData.response, {
+    'Status is 200': (r) => r.status === 200,
+  });
 
   headers = {
     "X-Dedicated-Server-Key": gameKey,
@@ -121,10 +153,22 @@ export default function () {
 
   const postApiMatchResponseData = playersAPIV1Client.postApiMatch(headers);
 
+  check(postApiMatchResponseData.response, {
+    'Status is 201 or 400': (r) => r.status === 201 || r.status === 400,
+  });
+
   if (postApiMatchResponseData.data.id) {
     const getApiMatchIdResponseData = playersAPIV1Client.getApiMatchId(postApiMatchResponseData.data.id);
 
+    check(getApiMatchIdResponseData.response, {
+      'Status is 200': (r) => r.status === 200,
+    });
+
     const getApiMatchResponseData = playersAPIV1Client.getApiMatch(headers);
+
+    check(getApiMatchResponseData.response, {
+      'Status is 200': (r) => r.status === 200,
+    });
 
     let getApiMatchListParamsa: GetApiMatchListParams = {
       dotaId: dotaId,
@@ -147,5 +191,9 @@ export default function () {
       getApiMatchListParamsa,
       headers
     );
+
+    check(getApiMatchListResponseData.response, {
+      'Status is 200': (r) => r.status === 200,
+    });
   }
 }
