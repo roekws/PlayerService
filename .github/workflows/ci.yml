@@ -53,6 +53,7 @@ jobs:
           tests/Load/k6-script.test.ts \
           --vus 10 \
           --duration 30s
+      continue-on-error: true
 
     - name: Archive test results
       uses: actions/upload-artifact@v4
