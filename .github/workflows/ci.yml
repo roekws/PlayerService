@@ -29,18 +29,24 @@ jobs:
         SERVER_KEY: ${{ secrets.SERVER_KEY }}
         ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
       run: |
-        export ASPNETCORE_ENVIRONMENT="${ASPNETCORE_ENVIRONMENT}"
-        export DB_NAME="${DB_NAME}"
-        export DB_USER="${DB_USER}"
-        export DB_PASSWORD="${DB_PASSWORD}"
-        export SERVER_KEY="${SERVER_KEY}"
         export ADMIN_KEY="${ADMIN_KEY}"
-        docker compose up --build -d
+        echo "::add-mask::$SERVER_KEY"
+        echo "::add-mask::$ADMIN_KEY"
+        echo "::add-mask::$DB_NAME"
+        echo "::add-mask::$DB_USER"
+        echo "::add-mask::$DB_PASSWORD"
+
+        docker compose up --build -d \
+          -e ASPNETCORE_ENVIRONMENT="$ASPNETCORE_ENVIRONMENT" \
+          -e DB_NAME="$DB_NAME" \
+          -e DB_USER="$DB_USER" \
+          -e DB_PASSWORD="$DB_PASSWORD" \
+          -e SERVER_KEY="$SERVER_KEY" \
+          -e ADMIN_KEY="$ADMIN_KEY"
 
     - name: Verify services
       run: |
         docker ps
-        docker compose logs
 
     - name: Setup Grafana k6
       uses: grafana/setup-k6-action@main
