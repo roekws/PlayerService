@@ -120,7 +120,11 @@ Load Testing:
 
 2. Run tests:
     ```sh
-    docker run --rm --env-file .env.dev -p 5665:5665 -i -v ${PWD}/tests/Load:/scripts grafana/k6 run /scripts/PlayerTest.js
+    docker run --rm --env-file .env.dev -p 5665:5665 -i -v ${PWD}/tests/Load:/scripts grafana/k6 run /scripts/k6-script.test.ts
+    ```
+    to simulate virtual users add
+    ```sh
+    --vus 100 --duration 30s
     ```
 
 3. Results:
@@ -129,6 +133,27 @@ Load Testing:
     - UI Dashboard: Access at
     ```
     http://127.0.0.1:5665/
+    ```
+
+To extend load tests:
+
+1. Update OpenAPI Spec:
+    ```sh
+    curl -o ./tests/Load/v1.json http://127.0.0.1:8080/openapi/v1.json
+    ```
+    Or download manually at:
+    ```sh
+    http://127.0.0.1:8080/openapi/v1.json
+    ```
+
+2. Regenerate Client:
+    ```sh
+    npx @grafana/openapi-to-k6 ./tests/Load/v1.json ./
+    ```
+
+3. Add/Update tests in:
+    ```sh
+    ./tests/Load/k6-script.test.ts
     ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
