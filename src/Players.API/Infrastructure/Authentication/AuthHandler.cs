@@ -65,19 +65,30 @@ public class AuthHandler : AuthenticationHandler<AuthSchemeOptions>
       return AuthenticateResult.Fail("The provided Steam ID is not a valid number");
     }
 
-    if (!Request.Headers.TryGetValue(AuthHeaders.GlobalPatchVersion, out var inputGameClientVersion))
+    if (!Request.Headers.TryGetValue(AuthHeaders.GlobalPatchVersion, out var inputGlobalPatchVersion))
     {
-      return AuthenticateResult.Fail("Game client version header is required");
+      return AuthenticateResult.Fail("Global patch version header is required");
     }
 
-    if (!long.TryParse(inputGameClientVersion.ToString(), out var globalPatchVersion))
+    if (!long.TryParse(inputGlobalPatchVersion.ToString(), out var globalPatchVersion))
     {
-      return AuthenticateResult.Fail("Client version must be a valid number");
+      return AuthenticateResult.Fail("Global patch version must be a valid number");
+    }
+
+    if (!Request.Headers.TryGetValue(AuthHeaders.BalancePatchVersion, out var inputBalancePatchtVersion))
+    {
+      return AuthenticateResult.Fail("Balance patch version header is required");
+    }
+
+    if (!long.TryParse(inputBalancePatchtVersion.ToString(), out var balancePatchVersion))
+    {
+      return AuthenticateResult.Fail("Balance patch version must be a valid number");
     }
 
     claims.Add(new Claim(PlayersClaimTypes.DotaId, dotaId.ToString()));
     claims.Add(new Claim(PlayersClaimTypes.SteamId, steamId.ToString()));
     claims.Add(new Claim(PlayersClaimTypes.GlobalPatchVersion, globalPatchVersion.ToString()));
+    claims.Add(new Claim(PlayersClaimTypes.BalancePatchVersion, balancePatchVersion.ToString()));
 
     var identity = new ClaimsIdentity(claims, "GameAuth");
     var principal = new ClaimsPrincipal(identity);

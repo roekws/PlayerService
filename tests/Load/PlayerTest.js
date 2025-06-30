@@ -8,7 +8,8 @@ import {
 
 const BASE_URL = 'http://host.docker.internal:8080';
 const SERVER_KEY = __ENV.SERVER_KEY || 'x';
-const TEST_VERSION = '1';
+const GLOBAL_VERSION = '1';
+const BALANCE_VERSION = '1';
 
 // Shared state between VUs
 let registeredDotaIds = [];
@@ -56,7 +57,8 @@ function getAuthenticatedPlayer() {
       'X-Dedicated-Server-Key': SERVER_KEY,
       'X-Dota-Id': registeredDotaIds[playerIdx].toString(),
       'X-Steam-Id': registeredSteamIds[playerIdx].toString(),
-      'X-Global-Patch-Version': TEST_VERSION,
+      'X-Global-Patch-Version': GLOBAL_VERSION,
+      'X-Balance-Patch-Version': BALANCE_VERSION,
       'Content-Type': 'application/json'
     },
   });
@@ -129,7 +131,8 @@ function editPlayer() {
         'X-Dedicated-Server-Key': SERVER_KEY,
         'X-Dota-Id': registeredDotaIds[playerIdx].toString(),
         'X-Steam-Id': registeredSteamIds[playerIdx].toString(),
-        'X-Global-Patch-Version': TEST_VERSION,
+        'X-Global-Patch-Version': GLOBAL_VERSION,
+        'X-Balance-Patch-Version': BALANCE_VERSION,
         'Content-Type': 'application/json'
       },
     }
@@ -156,7 +159,8 @@ function registerNewPlayer() {
       'X-Dedicated-Server-Key': SERVER_KEY,
       'X-Dota-Id': dotaId.toString(),
       'X-Steam-Id': steamId.toString(),
-      'X-Global-Patch-Version': TEST_VERSION,
+      'X-Global-Patch-Version': GLOBAL_VERSION,
+      'X-Balance-Patch-Version': BALANCE_VERSION,
     },
   });
 

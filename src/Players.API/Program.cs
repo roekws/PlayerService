@@ -106,6 +106,14 @@ builder.Services.AddOpenApi(options =>
       Schema = new OpenApiSchema { Type = "long" }
     });
 
+    operation.Parameters.Add(new OpenApiParameter
+    {
+      Name = AuthHeaders.BalancePatchVersion,
+      In = ParameterLocation.Header,
+      Required = true,
+      Schema = new OpenApiSchema { Type = "long" }
+    });
+
     return Task.CompletedTask;
   });
 });

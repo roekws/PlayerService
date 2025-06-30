@@ -6,4 +6,5 @@ public static class AuthHeaders
   public const string DotaId = "X-Dota-Id";
   public const string SteamId = "X-Steam-Id";
   public const string GlobalPatchVersion = "X-Global-Patch-Version";
+  public const string BalancePatchVersion = "X-Balance-Patch-Version";
 }
