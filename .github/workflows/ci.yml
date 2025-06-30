@@ -5,7 +5,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,33 +35,25 @@ jobs:
       run: |
         docker ps
         docker compose logs
-  load-test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Pull k6 image
-        run: docker pull grafana/k6
-      - name: Run load test
-        run: |
-          docker run --rm \
-            --add-host=host.docker.internal:host-gateway \
-            -v $PWD/tests/Load:/scripts \
-            -v $PWD/test-results:/output \
-            grafana/k6 run \
-            --out json=/output/k6_results.json \
-            --out csv=/output/k6_results.csv \
-            /scripts/k6-script.test.ts \
-            --vus 10 \
-            --duration 30s
-      - name: Archive JOSN test results
-        uses: actions/upload-artifact@v4
-        with:
-          name: k6-json-results
-          path: output/test/k6_results.json
 
-      - name: Archive csv test results
-        uses: actions/upload-artifact@v4
-        with:
-          name: k6-csv-results
-          path: output/test/k6_results.csv
+    - name: Prepare test directory
+      run: mkdir -p test-results
+
+    - name: Run k6 tests
+      run: |
+        docker run --rm \
+          --network host \  # Critical - connects to host network
+          -v $PWD/tests/Load:/scripts \
+          -v $PWD/test-results:/output \
+          grafana/k6 run \
+          --out json=/output/k6_results.json \
+          --out csv=/output/k6_results.csv \
+          /scripts/k6-script.js \
+          --vus 10 \
+          --duration 30s
+
+    - name: Archive test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: k6-test-results
+        path: test-results/*
