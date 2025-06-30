@@ -29,12 +29,12 @@ jobs:
         SERVER_KEY: ${{ secrets.SERVER_KEY }}
         ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
       run: |
-        export ASPNETCORE_ENVIRONMENT="${ASPNETCORE_ENVIRONMENT}" \
-        export DB_NAME="${DB_NAME}" \
-        export DB_USER="${DB_USER}" \
-        export DB_PASSWORD="$ DB_PASSWORD}" \
-        export SERVER_KEY="${SERVER_KEY}" \
-        export ADMIN_KEY="${ADMIN_KEY}" \
+        export ASPNETCORE_ENVIRONMENT="${ASPNETCORE_ENVIRONMENT}"
+        export DB_NAME="${DB_NAME}"
+        export DB_USER="${DB_USER}"
+        export DB_PASSWORD="${DB_PASSWORD}"
+        export SERVER_KEY="${SERVER_KEY}"
+        export ADMIN_KEY="${ADMIN_KEY}"
         docker compose up --build -d
 
     - name: Verify services
