@@ -9,7 +9,7 @@ public static class MatchErrors
     new(ErrorType.Validation, "#active_match_exists", "Player already has an active match in progress");
 
   public static Error NotActive =>
-    new(ErrorType.Failure, "#match_not_active", "Match is not active");
+    new(ErrorType.Validation, "#match_not_active", "Match is not active");
 
   public static Error RetrieveFailed =>
     new(ErrorType.Failure, "#match_retrieve_failed", "Failed to fetch match data");
