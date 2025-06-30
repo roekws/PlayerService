@@ -36,19 +36,14 @@ jobs:
         docker ps
         docker compose logs
 
-    - name: Prepare test directory
-      run: mkdir -p test-results
+    - name: Setup Grafana k6
+      uses: grafana/setup-k6-action@main
 
     - name: Run k6 tests
       run: |
-        docker run --rm \
-          --network host \
-          -v $PWD/tests/Load:/scripts \
-          -v $PWD/test-results:/output \
-          grafana/k6 run \
-          --out json=/output/k6_results.json \
-          --out csv=/output/k6_results.csv \
-          /scripts/k6-script.test.ts \
+        k6 run \
+          --out csv=test-results/k6_results.csv \
+          tests/Load/k6-script.test.ts \
           --vus 10 \
           --duration 30s
 
