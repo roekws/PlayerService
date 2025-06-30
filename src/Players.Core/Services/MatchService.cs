@@ -46,8 +46,8 @@ public class MatchService(PlayerContext context) : IMatchService
     var query = _context.Matches
       .AsNoTracking()
       .Where(match =>
-        match.GameClientVersion == gameClientVersion &&
-        match.PlayerId == player.Id
+        match.PlayerId == player.Id &&
+        match.State == MatchState.Active
       );
 
     if (detailed)
@@ -57,9 +57,28 @@ public class MatchService(PlayerContext context) : IMatchService
 
     var match = await query.FirstOrDefaultAsync();
 
-    return match == null ?
-      Result<Match>.Failure(MatchErrors.NotFound) :
-      Result<Match>.Success(match);
+    if (match == null)
+    {
+      return Result<Match>.Failure(MatchErrors.NotFound);
+    }
+
+    if (match.GameClientVersion != gameClientVersion)
+    {
+      try
+      {
+        match.State = MatchState.SystemTerminate;
+
+        await context.SaveChangesAsync();
+
+        return Result<Match>.Failure(MatchErrors.VersionOutdated);
+      }
+      catch
+      {
+        return Result<Match>.Failure(MatchErrors.UpdateFailed);
+      }
+    }
+
+    return Result<Match>.Success(match);
   }
 
   public async Task<Result<PaginatedList<Match>>> GetPaginatedByPlayerAsync(

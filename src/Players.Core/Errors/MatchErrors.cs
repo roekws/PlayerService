@@ -11,6 +11,9 @@ public static class MatchErrors
   public static Error NotActive =>
     new(ErrorType.Validation, "#match_not_active", "Match is not active");
 
+  public static Error VersionOutdated =>
+    new(ErrorType.Validation, "#match_version_outdated", "Last active match version is outdated, match will be terminated");
+
   public static Error RetrieveFailed =>
     new(ErrorType.Failure, "#match_retrieve_failed", "Failed to fetch match data");
 

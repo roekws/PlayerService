@@ -6,9 +6,9 @@ public enum MatchState : ushort
 
   Lose = 1,
 
-  Abandon = 2,
+  PlayerAbandon = 2,
 
-  Cancel = 3,
+  SystemTerminate = 3,
 
   Active = 4
 }
