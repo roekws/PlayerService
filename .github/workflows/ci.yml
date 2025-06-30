@@ -35,7 +35,8 @@ jobs:
         echo "::add-mask::$DB_NAME"
         echo "::add-mask::$DB_USER"
         echo "::add-mask::$DB_PASSWORD"
-
+        [ -z "$APP_ENV" ] && echo "APP_ENV is null" || echo "APP_ENV exists"
+        [ -z "$SERVER_KEY_VAR" ] && echo "SERVER_KEY is null" || echo "SERVER_KEY exists"
         docker compose up --build -d \
           -e ASPNETCORE_ENVIRONMENT="$ASPNETCORE_ENVIRONMENT" \
           -e DB_NAME="$DB_NAME" \
