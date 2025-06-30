@@ -42,6 +42,7 @@ jobs:
     - name: Run k6 tests
       run: |
         k6 run \
+          -e BASE_URL=http://127.0.0.1:8080 \
           --out csv=k6_results.csv \
           tests/Load/k6-script.test.ts \
           --vus 10 \

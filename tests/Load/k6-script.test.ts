@@ -7,11 +7,11 @@ import {
 } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 import { SharedArray } from 'k6/data';
 
-const baseUrl = "http://host.docker.internal:8080";
 const globalPatch = "1";
 const balancePatch = "1";
 const gameKey = __ENV.SERVER_KEY
 const adminKey = __ENV.ADMIN_KEY
+const baseUrl = __ENV.BASE_URL || "http://host.docker.internal:8080";
 
 const playersAPIV1Client = new PlayersAPIV1Client({ baseUrl });
 
