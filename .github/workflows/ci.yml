@@ -42,7 +42,7 @@ jobs:
     - name: Run k6 tests
       run: |
         k6 run \
-          --out csv=test-results/k6_results.csv \
+          --out csv=k6_results.csv \
           tests/Load/k6-script.test.ts \
           --vus 10 \
           --duration 30s
@@ -51,4 +51,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: k6-test-results
-        path: test-results/*
+        path: k6_results.csv
