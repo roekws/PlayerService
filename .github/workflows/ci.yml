@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Build and Test
 
 on:
   push:
@@ -35,3 +35,17 @@ jobs:
       run: |
         docker ps
         docker compose logs
+  load-test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pull k6 image
+        run: docker pull grafana/k6
+      - name: Run load test
+        run: |
+          docker run --add-host=host.docker.internal:host-gateway \
+            -v $PWD/tests/Load:/scripts \
+            grafana/k6 run /scripts/k6-script.test.ts \
+            --vus 10 \
+            --duration 30s
