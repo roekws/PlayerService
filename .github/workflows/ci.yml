@@ -48,7 +48,7 @@ jobs:
           grafana/k6 run \
           --out json=/output/k6_results.json \
           --out csv=/output/k6_results.csv \
-          /scripts/k6-script.js \
+          /scripts/k6-script.test.ts \
           --vus 10 \
           --duration 30s
 
