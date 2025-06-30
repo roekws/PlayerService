@@ -56,7 +56,7 @@ function getAuthenticatedPlayer() {
       'X-Dedicated-Server-Key': SERVER_KEY,
       'X-Dota-Id': registeredDotaIds[playerIdx].toString(),
       'X-Steam-Id': registeredSteamIds[playerIdx].toString(),
-      'X-Game-Client-Version': TEST_VERSION,
+      'X-Global-Patch-Version': TEST_VERSION,
       'Content-Type': 'application/json'
     },
   });
@@ -129,7 +129,7 @@ function editPlayer() {
         'X-Dedicated-Server-Key': SERVER_KEY,
         'X-Dota-Id': registeredDotaIds[playerIdx].toString(),
         'X-Steam-Id': registeredSteamIds[playerIdx].toString(),
-        'X-Game-Client-Version': TEST_VERSION,
+        'X-Global-Patch-Version': TEST_VERSION,
         'Content-Type': 'application/json'
       },
     }
@@ -156,7 +156,7 @@ function registerNewPlayer() {
       'X-Dedicated-Server-Key': SERVER_KEY,
       'X-Dota-Id': dotaId.toString(),
       'X-Steam-Id': steamId.toString(),
-      'X-Game-Client-Version': TEST_VERSION,
+      'X-Global-Patch-Version': TEST_VERSION,
     },
   });
 

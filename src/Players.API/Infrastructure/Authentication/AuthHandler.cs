@@ -65,19 +65,19 @@ public class AuthHandler : AuthenticationHandler<AuthSchemeOptions>
       return AuthenticateResult.Fail("The provided Steam ID is not a valid number");
     }
 
-    if (!Request.Headers.TryGetValue(AuthHeaders.GameClientVersion, out var inputGameClientVersion))
+    if (!Request.Headers.TryGetValue(AuthHeaders.GlobalPatchVersion, out var inputGameClientVersion))
     {
       return AuthenticateResult.Fail("Game client version header is required");
     }
 
-    if (!long.TryParse(inputGameClientVersion.ToString(), out var gameClientVersion))
+    if (!long.TryParse(inputGameClientVersion.ToString(), out var globalPatchVersion))
     {
       return AuthenticateResult.Fail("Client version must be a valid number");
     }
 
     claims.Add(new Claim(PlayersClaimTypes.DotaId, dotaId.ToString()));
     claims.Add(new Claim(PlayersClaimTypes.SteamId, steamId.ToString()));
-    claims.Add(new Claim(PlayersClaimTypes.GameClientVersion, gameClientVersion.ToString()));
+    claims.Add(new Claim(PlayersClaimTypes.GlobalPatchVersion, globalPatchVersion.ToString()));
 
     var identity = new ClaimsIdentity(claims, "GameAuth");
     var principal = new ClaimsPrincipal(identity);

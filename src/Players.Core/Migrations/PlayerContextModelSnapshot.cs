@@ -10,456 +10,456 @@ using Players.Core.Data;
 
 namespace Players.Core.Migrations
 {
-    [DbContext(typeof(PlayerContext))]
-    partial class PlayerContextModelSnapshot : ModelSnapshot
+  [DbContext(typeof(PlayerContext))]
+  partial class PlayerContextModelSnapshot : ModelSnapshot
+  {
+    protected override void BuildModel(ModelBuilder modelBuilder)
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
-        {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.5")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+      modelBuilder
+          .HasAnnotation("ProductVersion", "9.0.5")
+          .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+      NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Players.Core.Entities.Building", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+      modelBuilder.Entity("Players.Core.Entities.Building", b =>
+          {
+            b.Property<long>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("CityId")
-                        .HasColumnType("bigint");
+            b.Property<long>("CityId")
+                      .HasColumnType("bigint");
 
-                    b.Property<int>("Experience")
-                        .HasColumnType("integer");
+            b.Property<int>("Experience")
+                      .HasColumnType("integer");
 
-                    b.Property<int>("GridX")
-                        .HasColumnType("integer");
+            b.Property<int>("GridX")
+                      .HasColumnType("integer");
 
-                    b.Property<int>("GridY")
-                        .HasColumnType("integer");
+            b.Property<int>("GridY")
+                      .HasColumnType("integer");
 
-                    b.Property<int>("GridZ")
-                        .HasColumnType("integer");
+            b.Property<int>("GridZ")
+                      .HasColumnType("integer");
 
-                    b.Property<int>("Health")
-                        .HasColumnType("integer");
+            b.Property<int>("Health")
+                      .HasColumnType("integer");
 
-                    b.Property<int>("Level")
-                        .HasColumnType("integer");
+            b.Property<int>("Level")
+                      .HasColumnType("integer");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
+            b.Property<string>("Name")
+                      .IsRequired()
+                      .HasColumnType("text");
 
-                    b.Property<int>("Rotation")
-                        .HasColumnType("integer");
+            b.Property<int>("Rotation")
+                      .HasColumnType("integer");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.HasIndex("CityId");
+            b.HasIndex("CityId");
 
-                    b.ToTable("Buildings");
-                });
+            b.ToTable("Buildings");
+          });
 
-            modelBuilder.Entity("Players.Core.Entities.BuildingAbility", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+      modelBuilder.Entity("Players.Core.Entities.BuildingAbility", b =>
+          {
+            b.Property<long>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("BuildingId")
-                        .HasColumnType("bigint");
+            b.Property<long>("BuildingId")
+                      .HasColumnType("bigint");
 
-                    b.Property<long>("Level")
-                        .HasColumnType("bigint");
+            b.Property<long>("Level")
+                      .HasColumnType("bigint");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
+            b.Property<string>("Name")
+                      .IsRequired()
+                      .HasColumnType("text");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.HasIndex("BuildingId");
+            b.HasIndex("BuildingId");
 
-                    b.ToTable("BuildingAbilities");
-                });
+            b.ToTable("BuildingAbilities");
+          });
 
-            modelBuilder.Entity("Players.Core.Entities.Character", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+      modelBuilder.Entity("Players.Core.Entities.Character", b =>
+          {
+            b.Property<long>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<int>("Experience")
-                        .HasColumnType("integer");
+            b.Property<int>("Experience")
+                      .HasColumnType("integer");
 
-                    b.Property<int>("Gold")
-                        .HasColumnType("integer");
+            b.Property<int>("Gold")
+                      .HasColumnType("integer");
 
-                    b.Property<int>("Health")
-                        .HasColumnType("integer");
+            b.Property<int>("Health")
+                      .HasColumnType("integer");
 
-                    b.Property<int>("Hero")
-                        .HasColumnType("integer");
+            b.Property<int>("Hero")
+                      .HasColumnType("integer");
 
-                    b.Property<int>("Level")
-                        .HasColumnType("integer");
+            b.Property<int>("Level")
+                      .HasColumnType("integer");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.ToTable("Characters");
-                });
+            b.ToTable("Characters");
+          });
 
-            modelBuilder.Entity("Players.Core.Entities.CharacterAbility", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+      modelBuilder.Entity("Players.Core.Entities.CharacterAbility", b =>
+          {
+            b.Property<long>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("CharacterId")
-                        .HasColumnType("bigint");
+            b.Property<long>("CharacterId")
+                      .HasColumnType("bigint");
 
-                    b.Property<long>("Level")
-                        .HasColumnType("bigint");
+            b.Property<long>("Level")
+                      .HasColumnType("bigint");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
+            b.Property<string>("Name")
+                      .IsRequired()
+                      .HasColumnType("text");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.HasIndex("CharacterId");
+            b.HasIndex("CharacterId");
 
-                    b.ToTable("CharacterAbilities");
-                });
+            b.ToTable("CharacterAbilities");
+          });
 
-            modelBuilder.Entity("Players.Core.Entities.CharacterItem", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+      modelBuilder.Entity("Players.Core.Entities.CharacterItem", b =>
+          {
+            b.Property<long>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("CharacterId")
-                        .HasColumnType("bigint");
+            b.Property<long>("CharacterId")
+                      .HasColumnType("bigint");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
+            b.Property<string>("Name")
+                      .IsRequired()
+                      .HasColumnType("text");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.HasIndex("CharacterId");
+            b.HasIndex("CharacterId");
 
-                    b.ToTable("CharacterItems");
-                });
+            b.ToTable("CharacterItems");
+          });
 
-            modelBuilder.Entity("Players.Core.Entities.City", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+      modelBuilder.Entity("Players.Core.Entities.City", b =>
+          {
+            b.Property<long>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<int>("Health")
-                        .HasColumnType("integer");
+            b.Property<int>("Health")
+                      .HasColumnType("integer");
 
-                    b.Property<int>("Level")
-                        .HasColumnType("integer");
+            b.Property<int>("Level")
+                      .HasColumnType("integer");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.ToTable("Cities");
-                });
+            b.ToTable("Cities");
+          });
 
-            modelBuilder.Entity("Players.Core.Entities.Match", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+      modelBuilder.Entity("Players.Core.Entities.Match", b =>
+          {
+            b.Property<long>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("CharacterId")
-                        .HasColumnType("bigint");
+            b.Property<long?>("CharacterId")
+                      .HasColumnType("bigint");
 
-                    b.Property<long?>("CityId")
-                        .HasColumnType("bigint");
+            b.Property<long?>("CityId")
+                      .HasColumnType("bigint");
 
-                    b.Property<DateTime?>("EndTime")
-                        .HasColumnType("timestamp with time zone");
+            b.Property<DateTime?>("EndTime")
+                      .HasColumnType("timestamp with time zone");
 
-                    b.Property<long>("GameClientVersion")
-                        .HasColumnType("bigint");
+            b.Property<long>("GlobalPatchVersion")
+                      .HasColumnType("bigint");
 
-                    b.Property<int>("Level")
-                        .HasColumnType("integer");
+            b.Property<int>("Level")
+                      .HasColumnType("integer");
 
-                    b.Property<long>("PlayerId")
-                        .HasColumnType("bigint");
+            b.Property<long>("PlayerId")
+                      .HasColumnType("bigint");
 
-                    b.Property<int>("RatingChange")
-                        .HasColumnType("integer");
+            b.Property<int>("RatingChange")
+                      .HasColumnType("integer");
 
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("timestamp with time zone");
+            b.Property<DateTime>("StartTime")
+                      .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("State")
-                        .HasColumnType("integer");
+            b.Property<int>("State")
+                      .HasColumnType("integer");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.HasIndex("CharacterId")
-                        .IsUnique();
+            b.HasIndex("CharacterId")
+                      .IsUnique();
 
-                    b.HasIndex("CityId")
-                        .IsUnique();
+            b.HasIndex("CityId")
+                      .IsUnique();
 
-                    b.HasIndex("Level");
+            b.HasIndex("Level");
 
-                    b.HasIndex("PlayerId");
+            b.HasIndex("PlayerId");
 
-                    b.ToTable("Matches");
-                });
+            b.ToTable("Matches");
+          });
 
-            modelBuilder.Entity("Players.Core.Entities.MatchBattle", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+      modelBuilder.Entity("Players.Core.Entities.MatchBattle", b =>
+          {
+            b.Property<long>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<int>("BaseHealthChange")
-                        .HasColumnType("integer");
+            b.Property<int>("BaseHealthChange")
+                      .HasColumnType("integer");
 
-                    b.Property<int>("CharacterHealthChange")
-                        .HasColumnType("integer");
+            b.Property<int>("CharacterHealthChange")
+                      .HasColumnType("integer");
 
-                    b.Property<DateTime?>("EndTime")
-                        .HasColumnType("timestamp with time zone");
+            b.Property<DateTime?>("EndTime")
+                      .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("EnemyCharacterSnapshotJson")
-                        .HasColumnType("jsonb");
+            b.Property<string>("EnemyCharacterSnapshotJson")
+                      .HasColumnType("jsonb");
 
-                    b.Property<string>("EnemyCitySnapshotJson")
-                        .HasColumnType("jsonb");
+            b.Property<string>("EnemyCitySnapshotJson")
+                      .HasColumnType("jsonb");
 
-                    b.Property<long>("EnemyPlayerId")
-                        .HasColumnType("bigint");
+            b.Property<long>("EnemyPlayerId")
+                      .HasColumnType("bigint");
 
-                    b.Property<int>("ExperienceChange")
-                        .HasColumnType("integer");
+            b.Property<int>("ExperienceChange")
+                      .HasColumnType("integer");
 
-                    b.Property<int>("GoldChange")
-                        .HasColumnType("integer");
+            b.Property<int>("GoldChange")
+                      .HasColumnType("integer");
 
-                    b.Property<long>("MatchId")
-                        .HasColumnType("bigint");
+            b.Property<long>("MatchId")
+                      .HasColumnType("bigint");
 
-                    b.Property<int>("Number")
-                        .HasColumnType("integer");
+            b.Property<int>("Number")
+                      .HasColumnType("integer");
 
-                    b.Property<string>("PlayerCharacterSnapshotJson")
-                        .HasColumnType("jsonb");
+            b.Property<string>("PlayerCharacterSnapshotJson")
+                      .HasColumnType("jsonb");
 
-                    b.Property<string>("PlayerCitySnapshotJson")
-                        .HasColumnType("jsonb");
+            b.Property<string>("PlayerCitySnapshotJson")
+                      .HasColumnType("jsonb");
 
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("timestamp with time zone");
+            b.Property<DateTime>("StartTime")
+                      .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("State")
-                        .HasColumnType("integer");
+            b.Property<int>("State")
+                      .HasColumnType("integer");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.HasIndex("EnemyPlayerId");
+            b.HasIndex("EnemyPlayerId");
 
-                    b.HasIndex("MatchId");
+            b.HasIndex("MatchId");
 
-                    b.ToTable("MatchBattles");
-                });
+            b.ToTable("MatchBattles");
+          });
 
-            modelBuilder.Entity("Players.Core.Entities.Player", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+      modelBuilder.Entity("Players.Core.Entities.Player", b =>
+          {
+            b.Property<long>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+            b.Property<DateTime>("CreatedAt")
+                      .HasColumnType("timestamp with time zone");
 
-                    b.Property<long>("CurrentMatchId")
-                        .HasColumnType("bigint");
+            b.Property<long>("CurrentMatchId")
+                      .HasColumnType("bigint");
 
-                    b.Property<long>("DotaId")
-                        .HasColumnType("bigint");
+            b.Property<long>("DotaId")
+                      .HasColumnType("bigint");
 
-                    b.Property<bool>("IsPublicForLadder")
-                        .HasColumnType("boolean");
+            b.Property<bool>("IsPublicForLadder")
+                      .HasColumnType("boolean");
 
-                    b.Property<DateTime>("LastActivity")
-                        .HasColumnType("timestamp with time zone");
+            b.Property<DateTime>("LastActivity")
+                      .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("PublicName")
-                        .IsRequired()
-                        .HasColumnType("text");
+            b.Property<string>("PublicName")
+                      .IsRequired()
+                      .HasColumnType("text");
 
-                    b.Property<int>("Rating")
-                        .HasColumnType("integer");
+            b.Property<int>("Rating")
+                      .HasColumnType("integer");
 
-                    b.Property<long>("SteamId")
-                        .HasColumnType("bigint");
+            b.Property<long>("SteamId")
+                      .HasColumnType("bigint");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.HasIndex("CurrentMatchId");
+            b.HasIndex("CurrentMatchId");
 
-                    b.HasIndex("DotaId")
-                        .IsUnique();
+            b.HasIndex("DotaId")
+                      .IsUnique();
 
-                    b.HasIndex("SteamId")
-                        .IsUnique();
+            b.HasIndex("SteamId")
+                      .IsUnique();
 
-                    b.ToTable("Players");
-                });
+            b.ToTable("Players");
+          });
 
-            modelBuilder.Entity("Players.Core.Entities.Building", b =>
-                {
-                    b.HasOne("Players.Core.Entities.City", "City")
-                        .WithMany("Buildings")
-                        .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+      modelBuilder.Entity("Players.Core.Entities.Building", b =>
+          {
+            b.HasOne("Players.Core.Entities.City", "City")
+                      .WithMany("Buildings")
+                      .HasForeignKey("CityId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-                    b.Navigation("City");
-                });
+            b.Navigation("City");
+          });
 
-            modelBuilder.Entity("Players.Core.Entities.BuildingAbility", b =>
-                {
-                    b.HasOne("Players.Core.Entities.Building", "Building")
-                        .WithMany("Abilities")
-                        .HasForeignKey("BuildingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+      modelBuilder.Entity("Players.Core.Entities.BuildingAbility", b =>
+          {
+            b.HasOne("Players.Core.Entities.Building", "Building")
+                      .WithMany("Abilities")
+                      .HasForeignKey("BuildingId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-                    b.Navigation("Building");
-                });
+            b.Navigation("Building");
+          });
 
-            modelBuilder.Entity("Players.Core.Entities.CharacterAbility", b =>
-                {
-                    b.HasOne("Players.Core.Entities.Character", "Character")
-                        .WithMany("Abilities")
-                        .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+      modelBuilder.Entity("Players.Core.Entities.CharacterAbility", b =>
+          {
+            b.HasOne("Players.Core.Entities.Character", "Character")
+                      .WithMany("Abilities")
+                      .HasForeignKey("CharacterId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-                    b.Navigation("Character");
-                });
+            b.Navigation("Character");
+          });
 
-            modelBuilder.Entity("Players.Core.Entities.CharacterItem", b =>
-                {
-                    b.HasOne("Players.Core.Entities.Character", "Character")
-                        .WithMany("Items")
-                        .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+      modelBuilder.Entity("Players.Core.Entities.CharacterItem", b =>
+          {
+            b.HasOne("Players.Core.Entities.Character", "Character")
+                      .WithMany("Items")
+                      .HasForeignKey("CharacterId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-                    b.Navigation("Character");
-                });
+            b.Navigation("Character");
+          });
 
-            modelBuilder.Entity("Players.Core.Entities.Match", b =>
-                {
-                    b.HasOne("Players.Core.Entities.Character", "Character")
-                        .WithOne("Match")
-                        .HasForeignKey("Players.Core.Entities.Match", "CharacterId");
+      modelBuilder.Entity("Players.Core.Entities.Match", b =>
+          {
+            b.HasOne("Players.Core.Entities.Character", "Character")
+                      .WithOne("Match")
+                      .HasForeignKey("Players.Core.Entities.Match", "CharacterId");
 
-                    b.HasOne("Players.Core.Entities.City", "City")
-                        .WithOne("Match")
-                        .HasForeignKey("Players.Core.Entities.Match", "CityId");
+            b.HasOne("Players.Core.Entities.City", "City")
+                      .WithOne("Match")
+                      .HasForeignKey("Players.Core.Entities.Match", "CityId");
 
-                    b.HasOne("Players.Core.Entities.Player", "Player")
-                        .WithMany("Matches")
-                        .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            b.HasOne("Players.Core.Entities.Player", "Player")
+                      .WithMany("Matches")
+                      .HasForeignKey("PlayerId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-                    b.Navigation("Character");
+            b.Navigation("Character");
 
-                    b.Navigation("City");
+            b.Navigation("City");
 
-                    b.Navigation("Player");
-                });
+            b.Navigation("Player");
+          });
 
-            modelBuilder.Entity("Players.Core.Entities.MatchBattle", b =>
-                {
-                    b.HasOne("Players.Core.Entities.Player", "EnemyPlayer")
-                        .WithMany("MatchesBattles")
-                        .HasForeignKey("EnemyPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+      modelBuilder.Entity("Players.Core.Entities.MatchBattle", b =>
+          {
+            b.HasOne("Players.Core.Entities.Player", "EnemyPlayer")
+                      .WithMany("MatchesBattles")
+                      .HasForeignKey("EnemyPlayerId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-                    b.HasOne("Players.Core.Entities.Match", "Match")
-                        .WithMany("Battles")
-                        .HasForeignKey("MatchId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            b.HasOne("Players.Core.Entities.Match", "Match")
+                      .WithMany("Battles")
+                      .HasForeignKey("MatchId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-                    b.Navigation("EnemyPlayer");
+            b.Navigation("EnemyPlayer");
 
-                    b.Navigation("Match");
-                });
+            b.Navigation("Match");
+          });
 
-            modelBuilder.Entity("Players.Core.Entities.Building", b =>
-                {
-                    b.Navigation("Abilities");
-                });
+      modelBuilder.Entity("Players.Core.Entities.Building", b =>
+          {
+            b.Navigation("Abilities");
+          });
 
-            modelBuilder.Entity("Players.Core.Entities.Character", b =>
-                {
-                    b.Navigation("Abilities");
+      modelBuilder.Entity("Players.Core.Entities.Character", b =>
+          {
+            b.Navigation("Abilities");
 
-                    b.Navigation("Items");
+            b.Navigation("Items");
 
-                    b.Navigation("Match")
-                        .IsRequired();
-                });
+            b.Navigation("Match")
+                      .IsRequired();
+          });
 
-            modelBuilder.Entity("Players.Core.Entities.City", b =>
-                {
-                    b.Navigation("Buildings");
+      modelBuilder.Entity("Players.Core.Entities.City", b =>
+          {
+            b.Navigation("Buildings");
 
-                    b.Navigation("Match")
-                        .IsRequired();
-                });
+            b.Navigation("Match")
+                      .IsRequired();
+          });
 
-            modelBuilder.Entity("Players.Core.Entities.Match", b =>
-                {
-                    b.Navigation("Battles");
-                });
+      modelBuilder.Entity("Players.Core.Entities.Match", b =>
+          {
+            b.Navigation("Battles");
+          });
 
-            modelBuilder.Entity("Players.Core.Entities.Player", b =>
-                {
-                    b.Navigation("Matches");
+      modelBuilder.Entity("Players.Core.Entities.Player", b =>
+          {
+            b.Navigation("Matches");
 
-                    b.Navigation("MatchesBattles");
-                });
+            b.Navigation("MatchesBattles");
+          });
 #pragma warning restore 612, 618
-        }
     }
+  }
 }

@@ -16,7 +16,7 @@ public class Match
   public int Level { get; set; } = 0;
   public int RatingChange { get; set; } = 0;
 
-  public long GameClientVersion { get; set; }
+  public long GlobalPatchVersion { get; set; }
 
   public MatchState State { get; set; } = MatchState.Active;
 

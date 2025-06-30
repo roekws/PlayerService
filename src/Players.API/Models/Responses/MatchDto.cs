@@ -16,7 +16,7 @@ public class MatchDto
   public int? Level { get; set; }
   public int? RatingChange { get; set; }
 
-  public long? GameClientVersion { get; set; }
+  public long? GlobalPatchVersion { get; set; }
 
   public string? State { get; set; }
 
@@ -38,7 +38,7 @@ public class MatchDto
     EndTime = match.EndTime;
     Level = match.Level;
     RatingChange = match.RatingChange;
-    GameClientVersion = match.GameClientVersion;
+    GlobalPatchVersion = match.GlobalPatchVersion;
     State = match.State.ToString();
 
     Player = match.Player != null ? new PlayerDto(match.Player) : null;

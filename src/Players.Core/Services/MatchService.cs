@@ -29,7 +29,7 @@ public class MatchService(PlayerContext context) : IMatchService
       Result<Match>.Success(match);
   }
 
-  public async Task<Result<Match>> GetActiveByPlayerAsync(long dotaId, long steamId, bool detailed, long gameClientVersion)
+  public async Task<Result<Match>> GetActiveByPlayerAsync(long dotaId, long steamId, bool detailed, long globalPatchVersion)
   {
     var player = await _context.Players
       .AsNoTracking()
@@ -62,7 +62,7 @@ public class MatchService(PlayerContext context) : IMatchService
       return Result<Match>.Failure(MatchErrors.NotFound);
     }
 
-    if (match.GameClientVersion != gameClientVersion)
+    if (match.GlobalPatchVersion != globalPatchVersion)
     {
       try
       {
@@ -134,7 +134,7 @@ public class MatchService(PlayerContext context) : IMatchService
     }
   }
 
-  public async Task<Result<Match>> CreateMatchAsync(long dotaId, long steamId, long gameClientVersion)
+  public async Task<Result<Match>> CreateMatchAsync(long dotaId, long steamId, long globalPatchVersion)
   {
     var player = await _context.Players
       .AsNoTracking()
@@ -163,7 +163,7 @@ public class MatchService(PlayerContext context) : IMatchService
     var match = new Match()
     {
       PlayerId = player.Id,
-      GameClientVersion = gameClientVersion
+      GlobalPatchVersion = globalPatchVersion
     };
 
     try

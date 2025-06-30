@@ -100,7 +100,7 @@ builder.Services.AddOpenApi(options =>
 
     operation.Parameters.Add(new OpenApiParameter
     {
-      Name = AuthHeaders.GameClientVersion,
+      Name = AuthHeaders.GlobalPatchVersion,
       In = ParameterLocation.Header,
       Required = true,
       Schema = new OpenApiSchema { Type = "long" }
