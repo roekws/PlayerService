@@ -46,16 +46,21 @@ jobs:
       uses: grafana/setup-k6-action@main
 
     - name: Run k6 tests
+      env:
+        SERVER_KEY: ${{ secrets.SERVER_KEY }}
+        ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
       run: |
         k6 run \
           -e BASE_URL=http://127.0.0.1:8080 \
+          -e SERVER_KEY="$SERVER_KEY" \
+          -e ADMIN_KEY="$ADMIN_KEY" \
           --out csv=k6_results.csv \
           tests/Load/k6-script.test.ts \
           --vus 10 \
           --duration 30s
-      continue-on-error: true
 
     - name: Archive test results
+      if: always()
       uses: actions/upload-artifact@v4
       with:
         name: k6-test-results
