@@ -130,7 +130,7 @@ public class MatchService(PlayerContext context) : IMatchService
     }
     catch
     {
-      return Result<PaginatedList<Match>>.Failure(MatchErrors.NotFound);
+      return Result<PaginatedList<Match>>.Failure(MatchErrors.RetrieveFailed);
     }
   }
 
@@ -198,7 +198,7 @@ public class MatchService(PlayerContext context) : IMatchService
     }
     catch
     {
-      return Result<PaginatedList<Match>>.Failure(MatchErrors.NotFound);
+      return Result<PaginatedList<Match>>.Failure(MatchErrors.RetrieveFailed);
     }
   }
   public async Task<Result<Character>> CreateCharacterAsync(long id, Hero hero)
