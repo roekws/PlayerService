@@ -22,12 +22,12 @@ jobs:
 
     - name: Build and run
       env:
-        ASPNETCORE_ENVIRONMENT: ${{ secrets.ASPNETCORE_ENVIRONMENT }}
-        DB_NAME: ${{ secrets.DB_NAME }}
-        DB_USER: ${{ secrets.DB_USER }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        SERVER_KEY: ${{ secrets.SERVER_KEY }}
-        ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
+        export ASPNETCORE_ENVIRONMENT: ${{ secrets.ASPNETCORE_ENVIRONMENT }}
+        export DB_NAME: ${{ secrets.DB_NAME }}
+        export DB_USER: ${{ secrets.DB_USER }}
+        export DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        export SERVER_KEY: ${{ secrets.SERVER_KEY }}
+        export ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
       run: |
         docker compose up --build -d
 
