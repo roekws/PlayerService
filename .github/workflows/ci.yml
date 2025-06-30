@@ -35,8 +35,6 @@ jobs:
         echo "::add-mask::$DB_NAME"
         echo "::add-mask::$DB_USER"
         echo "::add-mask::$DB_PASSWORD"
-        [ -z "$DB_NAME" ] && echo "DB_NAME is null" || echo "DB_NAME exists"
-        [ -z "$ADMIN_KEY" ] && echo "ADMIN_KEY is null" || echo "ADMIN_KEY exists"
         docker compose up --build -d
 
     - name: Verify services
