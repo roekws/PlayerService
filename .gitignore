@@ -3,6 +3,9 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
+# Test results
+tests/Load/Results/*.csv
+
 # env files
 .env*
 appsettings.*json
