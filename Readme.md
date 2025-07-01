@@ -120,7 +120,13 @@ Load Testing:
 
 2. Run tests:
     ```sh
-    docker run --rm --env-file .env.dev -p 5665:5665 -i -v ${PWD}/tests/Load:/scripts grafana/k6 run /scripts/k6-script.test.ts
+    docker run --rm `
+    --env-file .env.dev `
+    -p 5665:5665 `
+    -v ${PWD}/tests/Load:/scripts `
+    grafana/k6 run `
+    --out csv=/scripts/results/k6_results.csv `
+    /scripts/k6-script.test.ts
     ```
     to simulate virtual users add
     ```sh
