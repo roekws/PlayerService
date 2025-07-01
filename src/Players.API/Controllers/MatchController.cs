@@ -86,8 +86,9 @@ public class MatchController(IMatchService matchService, IPlayerService playerSe
     var dotaId = long.Parse(User.FindFirst(PlayersClaimTypes.DotaId)!.Value);
     var steamId = long.Parse(User.FindFirst(PlayersClaimTypes.SteamId)!.Value);
     var globalPatchVersion = long.Parse(User.FindFirst(PlayersClaimTypes.GlobalPatchVersion)!.Value);
+    var balancePatchVersion = long.Parse(User.FindFirst(PlayersClaimTypes.BalancePatchVersion)!.Value);
 
-    var result = await matchService.CreateMatchAsync(dotaId, steamId, globalPatchVersion);
+    var result = await matchService.CreateMatchAsync(dotaId, steamId, globalPatchVersion, balancePatchVersion);
 
     return result.Match(
       onSuccess: match =>

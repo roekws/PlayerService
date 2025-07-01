@@ -21,6 +21,11 @@ public interface IMatchService
     int pageIndex = 1,
     int pageSize = 10
   );
-  Task<Result<Match>> CreateMatchAsync(long dotaId, long steamId, long globalPatchVersion);
+  Task<Result<Match>> CreateMatchAsync(
+    long dotaId,
+    long steamId,
+    long globalPatchVersion,
+    long balancePatchVersion
+  );
   Task<Result<Character>> CreateCharacterAsync(long id, Hero hero);
 }

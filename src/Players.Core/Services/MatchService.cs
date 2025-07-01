@@ -134,7 +134,12 @@ public class MatchService(PlayerContext context) : IMatchService
     }
   }
 
-  public async Task<Result<Match>> CreateMatchAsync(long dotaId, long steamId, long globalPatchVersion)
+  public async Task<Result<Match>> CreateMatchAsync(
+    long dotaId,
+    long steamId,
+    long globalPatchVersion,
+    long balancePatchVersion
+  )
   {
     var player = await _context.Players
       .AsNoTracking()
@@ -163,7 +168,8 @@ public class MatchService(PlayerContext context) : IMatchService
     var match = new Match()
     {
       PlayerId = player.Id,
-      GlobalPatchVersion = globalPatchVersion
+      GlobalPatchVersion = globalPatchVersion,
+      BalancePatchVersion = balancePatchVersion
     };
 
     try

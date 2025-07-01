@@ -17,6 +17,7 @@ public class Match
   public int RatingChange { get; set; } = 0;
 
   public long GlobalPatchVersion { get; set; }
+  public long BalancePatchVersion { get; set; }
 
   public MatchState State { get; set; } = MatchState.Active;
 
