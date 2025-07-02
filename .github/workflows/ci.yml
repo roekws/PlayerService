@@ -35,8 +35,7 @@ jobs:
         echo "::add-mask::$DB_NAME"
         echo "::add-mask::$DB_USER"
         echo "::add-mask::$DB_PASSWORD"
-        docker compose up --build -d
-        docker compose wait
+        docker compose up -d --build --wait
 
     - name: Verify services
       run: |
