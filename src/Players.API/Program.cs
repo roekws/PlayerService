@@ -130,6 +130,8 @@ builder.Services.AddDbContext<PlayerContext>(options => options.UseNpgsql(connec
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IMatchService, MatchService>();
 
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
 
 app.UseAuthentication();
@@ -154,5 +156,7 @@ else
 }
 
 app.MapControllers();
+
+app.MapHealthChecks("/health");
 
 app.Run();
