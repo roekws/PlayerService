@@ -356,7 +356,7 @@ export class PlayersAPIV1Client {
   } {
     const url = new URL(
       this.cleanBaseUrl +
-        `/api/match/${id}` +
+        `/api/matches/${id}` +
         `?${new URLSearchParams(params).toString()}`,
     );
     const mergedRequestParameters = this._mergeRequestParameters(
@@ -386,7 +386,7 @@ export class PlayersAPIV1Client {
     response: Response;
     data: void;
   } {
-    const url = new URL(this.cleanBaseUrl + `/api/match`);
+    const url = new URL(this.cleanBaseUrl + `/api/matches`);
     const mergedRequestParameters = this._mergeRequestParameters(
       requestParameters || {},
       this.commonRequestParameters,
@@ -424,7 +424,7 @@ export class PlayersAPIV1Client {
     response: Response;
     data: MatchDto;
   } {
-    const url = new URL(this.cleanBaseUrl + `/api/match`);
+    const url = new URL(this.cleanBaseUrl + `/api/matches`);
     const mergedRequestParameters = this._mergeRequestParameters(
       requestParameters || {},
       this.commonRequestParameters,
@@ -464,7 +464,7 @@ export class PlayersAPIV1Client {
   } {
     const url = new URL(
       this.cleanBaseUrl +
-        `/api/match/list` +
+        `/api/matches/list` +
         `?${new URLSearchParams(params).toString()}`,
     );
     const mergedRequestParameters = this._mergeRequestParameters(
@@ -497,7 +497,7 @@ export class PlayersAPIV1Client {
   } {
     const url = new URL(
       this.cleanBaseUrl +
-        `/api/match/all` +
+        `/api/matches/all` +
         `?${new URLSearchParams(params).toString()}`,
     );
     const mergedRequestParameters = this._mergeRequestParameters(
@@ -539,7 +539,7 @@ export class PlayersAPIV1Client {
   } {
     const url = new URL(
       this.cleanBaseUrl +
-        `/api/player` +
+        `/api/players` +
         `?${new URLSearchParams(params).toString()}`,
     );
     const mergedRequestParameters = this._mergeRequestParameters(
@@ -570,7 +570,7 @@ export class PlayersAPIV1Client {
     response: Response;
     data: BatchDeleteResult;
   } {
-    const url = new URL(this.cleanBaseUrl + `/api/player`);
+    const url = new URL(this.cleanBaseUrl + `/api/players`);
     const mergedRequestParameters = this._mergeRequestParameters(
       requestParameters || {},
       this.commonRequestParameters,
@@ -617,7 +617,7 @@ export class PlayersAPIV1Client {
   } {
     const url = new URL(
       this.cleanBaseUrl +
-        `/api/player/all` +
+        `/api/players/all` +
         `?${new URLSearchParams(params).toString()}`,
     );
     const mergedRequestParameters = this._mergeRequestParameters(
@@ -657,7 +657,7 @@ export class PlayersAPIV1Client {
     response: Response;
     data: PlayerDto2;
   } {
-    const url = new URL(this.cleanBaseUrl + `/api/player/register`);
+    const url = new URL(this.cleanBaseUrl + `/api/players/register`);
     const mergedRequestParameters = this._mergeRequestParameters(
       requestParameters || {},
       this.commonRequestParameters,
@@ -695,7 +695,7 @@ export class PlayersAPIV1Client {
     response: Response;
     data: PlayerDto2;
   } {
-    const url = new URL(this.cleanBaseUrl + `/api/player/me`);
+    const url = new URL(this.cleanBaseUrl + `/api/players/me`);
     const mergedRequestParameters = this._mergeRequestParameters(
       requestParameters || {},
       this.commonRequestParameters,
@@ -734,7 +734,7 @@ export class PlayersAPIV1Client {
     response: Response;
     data: PlayerDto2;
   } {
-    const url = new URL(this.cleanBaseUrl + `/api/player/edit`);
+    const url = new URL(this.cleanBaseUrl + `/api/players/edit`);
     const mergedRequestParameters = this._mergeRequestParameters(
       requestParameters || {},
       this.commonRequestParameters,
@@ -779,7 +779,7 @@ export class PlayersAPIV1Client {
     response: Response;
     data: PlayerDto2;
   } {
-    const url = new URL(this.cleanBaseUrl + `/api/player/idchange`);
+    const url = new URL(this.cleanBaseUrl + `/api/players/idchange`);
     const mergedRequestParameters = this._mergeRequestParameters(
       requestParameters || {},
       this.commonRequestParameters,
@@ -824,7 +824,7 @@ export class PlayersAPIV1Client {
     response: Response;
     data: void;
   } {
-    const url = new URL(this.cleanBaseUrl + `/api/player/${id}`);
+    const url = new URL(this.cleanBaseUrl + `/api/players/${id}`);
     const mergedRequestParameters = this._mergeRequestParameters(
       requestParameters || {},
       this.commonRequestParameters,

@@ -14,8 +14,8 @@ const baseUrl = __ENV.BASE_URL || "http://host.docker.internal:8080";
 const playersAPIV1Client = new PlayersAPIV1Client({ baseUrl });
 
 // Shared state between VUs
-let registeredDotaIds: number[] = [];
-let registeredSteamIds: number[] = [];
+let registeredDotaIds = new Set();;
+let registeredSteamIds = new Set();
 
 export const options = {
   thresholds: {
@@ -40,8 +40,12 @@ export default function () {
   let dotaId = randomIntBetween(1, 99999);
   let steamId = randomIntBetween(1, 99999);
 
-  while (registeredDotaIds.includes(dotaId)) dotaId++;
-  while (registeredSteamIds.includes(steamId)) steamId++;
+  while (registeredDotaIds.has(dotaId)) {
+    dotaId++;
+  }
+  while (registeredSteamIds.has(steamId)) {
+    steamId++;
+  }
 
   group('Player register', function () {
     headers = {
@@ -62,8 +66,8 @@ export default function () {
       return;
     }
 
-    registeredDotaIds.push(dotaId);
-    registeredSteamIds.push(steamId);
+    registeredDotaIds.add(dotaId);
+    registeredSteamIds.add(steamId);
     id = register.data.id;
     sleep(1);
   });

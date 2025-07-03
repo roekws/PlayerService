@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Players.API.Infrastructure.Authorization.Claims;
-using Players.API.Models.Requests.Player;
 using Players.API.Models.Responses;
 using Players.Core.Data.Results;
 using Players.Core.Services;
@@ -9,7 +8,7 @@ using Players.Core.Services;
 namespace Players.API.Controllers;
 
 [ApiController]
-[Route("api/match")]
+[Route("api/matches")]
 public class MatchController(IMatchService matchService, IPlayerService playerService) : BaseController
 {
   private readonly IMatchService matchService = matchService;

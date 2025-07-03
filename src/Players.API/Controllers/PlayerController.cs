@@ -4,13 +4,12 @@ using Players.API.Infrastructure.Authorization.Claims;
 using Players.API.Models.Requests.Player;
 using Players.API.Models.Responses;
 using Players.Core.Data.Results;
-using Players.Core.Entities;
 using Players.Core.Services;
 
 namespace Players.API.Controllers;
 
 [ApiController]
-[Route("api/player")]
+[Route("api/players")]
 public class PlayerController(IPlayerService playerService) : BaseController
 {
   private readonly IPlayerService playerService = playerService;
