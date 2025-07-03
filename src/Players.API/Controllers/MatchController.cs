@@ -19,7 +19,10 @@ public class MatchController(IMatchService matchService, IPlayerService playerSe
   [ProducesResponseType<MatchDto>(StatusCodes.Status200OK)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-  public async Task<IActionResult> GetMatchById(long id, bool detailed)
+  public async Task<IActionResult> GetMatchById(
+    [FromRoute] long id,
+    [FromQuery] bool detailed
+  )
   {
     var result = await matchService.GetByIdAsync(id, detailed);
 
