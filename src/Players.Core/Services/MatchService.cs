@@ -175,7 +175,9 @@ public class MatchService(PlayerContext context) : IMatchService
     try
     {
       _context.Matches.Add(match);
+
       await _context.SaveChangesAsync();
+
       return Result<Match>.Success(match);
     }
     catch
@@ -207,6 +209,7 @@ public class MatchService(PlayerContext context) : IMatchService
       return Result<PaginatedList<Match>>.Failure(MatchErrors.RetrieveFailed);
     }
   }
+
   public async Task<Result<Character>> CreateCharacterAsync(long id, Hero hero)
   {
     var match = await _context.Matches.FindAsync(id);
@@ -239,7 +242,10 @@ public class MatchService(PlayerContext context) : IMatchService
     try
     {
       match.Character = character;
-      var rowsAffected = await _context.SaveChangesAsync();
+
+      await _context.SaveChangesAsync();
+      context.Entry(character).State = EntityState.Detached;
+
       return Result<Character>.Success(character);
     }
     catch

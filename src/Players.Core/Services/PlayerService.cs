@@ -79,7 +79,9 @@ public class PlayerService(PlayerContext context) : IPlayerService
       };
 
       _context.Players.Add(AddPlayer);
-      var rowsAffected = await _context.SaveChangesAsync();
+
+      await _context.SaveChangesAsync();
+
       return Result<Player>.Success(AddPlayer);
     }
     catch
@@ -197,6 +199,7 @@ public class PlayerService(PlayerContext context) : IPlayerService
     try
     {
       _context.Players.Remove(player);
+
       await _context.SaveChangesAsync();
 
       return Result.Success();
@@ -240,6 +243,7 @@ public class PlayerService(PlayerContext context) : IPlayerService
       var deletedIds = playersToDelete.Select(player => player.Id).ToList();
 
       _context.Players.RemoveRange(playersToDelete);
+
       await _context.SaveChangesAsync();
 
       return Result<BatchDeleteResult>.Success(new BatchDeleteResult(deletedIds.Count, notFoundIds, deletedIds));
