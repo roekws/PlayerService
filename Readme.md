@@ -20,9 +20,14 @@
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
-        <li><a href="#testing">Testing</a></li>
-        <li><a href="#sources">Sources</a></li>
       </ul>
+      <li>
+        <a href="#development">Development</a>
+        <ul>
+        <li><a href="#testing">Testing</a></li>
+      </ul>
+      </li>
+      <li><a href="#sources">Sources</a></li>
     </li>
   </ol>
 </details>
@@ -39,8 +44,8 @@ Game loop:
 
 ### Project Structure
 
-- src/Players.API - Web API for player data management
-- src/Players.Core - Domain classes, context and migrations
+- src/Players.API - Web API for handling http requests
+- src/Players.Core - Domain classes, database context, services for player data management and migrations
 - src/Players.Tests - tests
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -87,80 +92,78 @@ Setting up project locally.
   docker compose --env-file .env.dev up --build
   ```
 
-3. Access the Interactive API Doc at:
+3. Access OpenApi Doc and Interactive API Doc at:
   ```sh
+  http://127.0.0.1:8080/openapi/v1.json
   http://127.0.0.1:8080/scalar/
   ```
 
-  OpenApi Doc:
+4. Stop with:
   ```sh
-  http://127.0.0.1:8080/openapi/v1.json
+  docker compose down
   ```
 
-4. Stop with:
-   ```sh
-   docker compose down
-   ```
-
 5. Develop with:
-    ```sh
-   docker compose watch --env-file .env.dev
-   ```
+  ```sh
+  docker compose watch --env-file .env.dev
+  ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Development
 
 ### Testing
 
 Load Testing:
 
 1. Pull docker image k6 with:
-    ```sh
-    docker pull grafana/k6
-    ```
+  ```sh
+  docker pull grafana/k6
+  ```
 
 2. Run tests:
-    ```sh
-    docker run --rm `
-    --env-file .env.dev `
-    -p 5665:5665 `
-    -v ${PWD}/tests/Load:/scripts `
-    grafana/k6 run `
-    --out csv=/scripts/results/k6_results.csv `
-    /scripts/k6-script.test.ts
-    ```
-    to simulate virtual users add
-    ```sh
-    --vus 100 --duration 30s
-    ```
+  ```sh
+  docker run --rm `
+  --env-file .env.dev `
+  -p 5665:5665 `
+  -v ${PWD}/tests/Load:/scripts `
+  grafana/k6 run `
+  --out csv=/scripts/results/k6_results.csv `
+  /scripts/k6-script.test.ts
+  ```
+  to simulate virtual users add
+  ```sh
+  --vus 100 --duration 30s
+  ```
 
 3. Results:
 
-    - Console output: Printed after test completion
-    - UI Dashboard: Access at
-    ```
-    http://127.0.0.1:5665/
-    ```
+  - Console output: Printed after test completion
+  - UI Dashboard: Access at
+  ```
+  http://127.0.0.1:5665/
+  ```
 
 To extend load tests:
 
 1. Update OpenAPI Spec:
-    ```sh
-    curl -o ./tests/Load/v1.json http://127.0.0.1:8080/openapi/v1.json
-    ```
-    Or download manually at:
-    ```sh
-    http://127.0.0.1:8080/openapi/v1.json
-    ```
+  ```sh
+  curl -o ./tests/Load/v1.json http://127.0.0.1:8080/openapi/v1.json
+  ```
+  Or download manually at:
+  ```sh
+  http://127.0.0.1:8080/openapi/v1.json
+  ```
 
 2. Regenerate Client:
-    ```sh
-    npx @grafana/openapi-to-k6 ./tests/Load/v1.json ./
-    ```
+  ```sh
+  npx @grafana/openapi-to-k6 ./tests/Load/v1.json ./
+  ```
 
 3. Add/Update tests in:
-    ```sh
-    ./tests/Load/k6-script.test.ts
-    ```
+  ```sh
+  ./tests/Load/k6-script.test.ts
+  ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -170,7 +173,7 @@ To extend load tests:
 - [Claims-based authorization in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/claims?view=aspnetcore-9.0)
 - [.NET Docker](https://docs.docker.com/guides/dotnet/)
 - [Grafana k6 load testing tool](https://grafana.com/docs/k6/latest/)
-- [(CI) workflow for Building and testing .NET](https://docs.github.com/en/actions/how-tos/use-cases-and-examples/building-and-testing/building-and-testing-net)
+- [(CI) Workflow for Building and testing .NET](https://docs.github.com/en/actions/how-tos/use-cases-and-examples/building-and-testing/building-and-testing-net)
 - [(CI) Storing and sharing data from a workflow](https://docs.github.com/en/actions/how-tos/writing-workflows/choosing-what-your-workflow-does/storing-and-sharing-data-from-a-workflow)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
