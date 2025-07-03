@@ -142,7 +142,9 @@ public class PlayerController(IPlayerService playerService) : BaseController
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-  public async Task<IActionResult> RemovePlayer(long id)
+  public async Task<IActionResult> RemovePlayer(
+    [FromRoute] long id
+  )
   {
     var result = await playerService.DeleteByIdAsync(id);
 
