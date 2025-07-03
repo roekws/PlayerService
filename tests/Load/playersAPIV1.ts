@@ -386,7 +386,7 @@ export class PlayersAPIV1Client {
     response: Response;
     data: void;
   } {
-    const url = new URL(this.cleanBaseUrl + `/api/matches`);
+    const url = new URL(this.cleanBaseUrl + `/api/matches/active`);
     const mergedRequestParameters = this._mergeRequestParameters(
       requestParameters || {},
       this.commonRequestParameters,

@@ -33,7 +33,7 @@ public class MatchController(IMatchService matchService, IPlayerService playerSe
   }
 
   [Authorize(Policy = Policies.GameOnly)]
-  [HttpGet()]
+  [HttpGet("active")]
   public async Task<IActionResult> GetPlayerActiveMatch()
   {
     var dotaId = long.Parse(User.FindFirst(PlayersClaimTypes.DotaId)!.Value);
