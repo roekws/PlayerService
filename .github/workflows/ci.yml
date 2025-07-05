@@ -49,6 +49,8 @@ jobs:
         SERVER_KEY: ${{ secrets.SERVER_KEY }}
         ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
       run: |
+        echo "::add-mask::$SERVER_KEY"
+        echo "::add-mask::$ADMIN_KEY"
         k6 run \
           -e BASE_URL=http://127.0.0.1:8080 \
           -e SERVER_KEY="$SERVER_KEY" \
