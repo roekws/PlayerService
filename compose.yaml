@@ -1,4 +1,61 @@
 services:
+  database:
+    image: postgres:16-alpine
+    restart: always
+    user: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ${DB_NAME} -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+
+  pgbouncer:
+    image: edoburu/pgbouncer:v1.24.1-p1
+    ports:
+      - "5432:5432"
+    environment:
+      - DB_HOST=database
+      - DB_PORT=5432
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - ADMIN_USERS=${DB_USER}
+      - POOL_MODE=transaction
+      - MAX_CLIENT_CONN=200
+      - DEFAULT_POOL_SIZE=200
+      - AUTH_TYPE=scram-sha-256
+    depends_on:
+      database:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-h', 'database']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '1'
+    #       memory: 1G
+    #     reservations:
+    #       cpus: '1'
+    #       memory: 1G
+
   api:
     build:
       context: .
@@ -6,47 +63,29 @@ services:
     ports:
       - 8080:8080
     environment:
-      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_CONNECTION: Host=database;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};
-      SERVER_KEY: ${SERVER_KEY}
-      ADMIN_KEY: ${ADMIN_KEY}
-    depends_on:
-      database:
-        condition: service_healthy
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_CONNECTION=Host=pgbouncer;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};
+      - SERVER_KEY=${SERVER_KEY}
+      - ADMIN_KEY= ${ADMIN_KEY}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://api:8080/health"]
       interval: 10s
       timeout: 5s
       retries: 5
-    develop:
-      watch:
-        - action: rebuild
-          path: ./src
-  # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: '0.5'
-    #       memory: 512M
+    depends_on:
+      pgbouncer:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '3'
+          memory: 3G
+        reservations:
+          cpus: '2'
+          memory: 1G
 
-  database:
-    image: postgres:16-alpine
-    restart: always
-    environment:
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-    user: postgres
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    expose:
-      - 5432
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d ${DB_NAME} -U ${DB_USER}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 volumes:
   db-data:
