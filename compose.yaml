@@ -69,7 +69,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_CONNECTION=Host=pgbouncer;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};
       - SERVER_KEY=${SERVER_KEY}
-      - ADMIN_KEY= ${ADMIN_KEY}
+      - ADMIN_KEY=${ADMIN_KEY}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://api:8080/health"]
       interval: 10s
